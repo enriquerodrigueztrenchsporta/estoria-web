@@ -4,16 +4,16 @@ Universo digital de **ESTORIA**, vino de la Denominación de Origen Calificada R
 
 | Página | Contenido |
 |---|---|
-| `/` La historia | Recorrido cinematográfico por scroll: la botella → el grabado → Rioja (fotos reales) → regreso al producto |
-| `/vinos/` | Tempranillo y Viura con botella 3D giratoria en cualquier dirección y ficha de cada vino |
-| `/rioja/` | El grabado de la etiqueta con el lema «La tierra guarda memoria y cada historia encuentra su momento» y paisajes de la DOCa |
-| `/mesa/` | El arte de compartir |
+| `/` La historia | Recorrido cinematográfico de 20 s que solo se reproduce si el visitante pulsa «Ver la historia» (la botella → el grabado → Rioja → regreso), seguido de la presentación de la marca |
+| `/vinos/` | Tempranillo y Viura con vista 360° hecha con fotografías reales de la botella (cuando existan) y ficha de cada vino |
+| `/rioja/` | El grabado de la etiqueta con el lema, la tradición vinícola de Rioja, las uvas de ESTORIA (Tempranillo y Viura) y paisajes de la DOCa |
+| `/mesa/` | Momentos para el vino: compartir, ocasiones especiales, buena comida, pequeños momentos |
 | `/contacto/` | Formulario con consentimiento RGPD |
 | `/aviso-legal/` · `/privacidad/` · `/cookies/` · `/creditos/` | Textos legales y créditos fotográficos |
 
 Además: verificación de mayoría de edad, aviso y configuración de cookies (criterios de la AEPD) y página 404.
 
-- **Stack:** Next.js 15 (export estático) · TypeScript estricto · Tailwind CSS 4 · Motion for React · Three.js / React Three Fiber (solo en `/vinos/`, con carga diferida)
+- **Stack:** Next.js 15 (export estático) · TypeScript estricto · Tailwind CSS 4 · Motion for React
 
 ## Requisitos
 
@@ -61,13 +61,15 @@ src/
   lib/            cámara (zoom con límite de resolución), guion temporal, validación, envío, consentimiento
   components/
     scenes/       recorrido cinematográfico + versión estática (movimiento reducido)
-    product/      expositor de vinos, visor 3D, ficha, etiqueta provisional
+    brand/        presentación de la marca (inicio)
+    product/      expositor de vinos, visor 360° fotográfico, ficha, etiqueta provisional
     editorial/    páginas Rioja y La mesa, fotografía con créditos
     forms/        formulario de contacto
     legal/        verificación de edad, cookies, plantilla de textos legales
     navigation/   cabecera adaptativa y menú móvil
 scripts/prepare_assets.py   genera public/media desde source-assets/ (sin retocar píxeles)
 scripts/prepare_photos.py   descarga y optimiza las fotos con licencia libre
+scripts/prepare_turntable.py convierte las fotos de la base giratoria en la vista 360° (npm run turntable -- <vino>)
 tests/            cámara y continuidad, contenido, licencias de fotos, páginas, formularios
 docs/             dirección creativa, storyboard y guía de contenido
 ```

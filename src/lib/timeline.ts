@@ -1,9 +1,13 @@
 /**
- * Guion temporal del recorrido cinematográfico, en fracciones del progreso de scroll (0–1).
+ * Guion temporal del recorrido cinematográfico, en fracciones de su duración (0–1).
+ * El recorrido no depende del scroll: solo se reproduce si el visitante lo pide.
  * Un único eje de tiempo para todas las capas: avanzar y retroceder es siempre continuo.
  * La cámara va de la botella directamente al grabado (sin recorrer los textos de la etiqueta).
  */
 import { frame, mixShots, type Framing, type Shot, type Size } from "./camera";
+
+/** Duración total del recorrido, en segundos. */
+export const JOURNEY_SECONDS = 20;
 
 export const SCENES = [
   { id: "revelacion", numeral: "I", title: "La revelación", start: 0 },

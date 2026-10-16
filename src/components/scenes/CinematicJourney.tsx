@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { animate, motion, useMotionValue, useMotionValueEvent, useScroll, useTransform, type MotionValue } from "motion/react";
+import { animate, motion, useMotionValue, useMotionValueEvent, useTransform, type AnimationPlaybackControls, type MotionValue } from "motion/react";
 import { story } from "@/content/copy";
 import { attribution, type Photo } from "@/content/credits";
 import { bottleLabelBox, engravingBands, media } from "@/content/media";
@@ -10,7 +10,7 @@ import { riojaPhotos } from "@/content/site";
 import { asset } from "@/lib/asset";
 import { containSize, maxScale } from "@/lib/camera";
 import { usePrefersReducedMotion, useViewport } from "@/lib/hooks";
-import { ENTRY_SCALE, SCENES, T, buildCameraStops, captionOpacity, sceneAt, shotAt } from "@/lib/timeline";
+import { ENTRY_SCALE, JOURNEY_SECONDS, SCENES, T, buildCameraStops, captionOpacity, sceneAt, shotAt } from "@/lib/timeline";
 import { StaticJourney } from "./StaticJourney";
 
 const label = media.tempranilloLabel;
@@ -41,12 +41,55 @@ const toneAt = (v: number) => (v < 0.3 || (v >= 0.5 && v < 0.86) ? "dark" : "lig
 function Journey() {
   const sectionRef = useRef<HTMLElement>(null);
   const viewport = useViewport();
-  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end end"] });
-  // Espejo sin aceleración: Motion 12 delega la opacidad en ScrollTimeline nativo, que aquí
-  // desincroniza unas capas de otras. Un único reloj JS mantiene todas las capas en fase.
+  // El recorrido es voluntario y no depende del scroll: un único reloj (`p`, 0–1) mueve todas
+  // las capas y solo avanza cuando el visitante pulsa «Ver la historia».
   const p = useMotionValue(0);
-  useMotionValueEvent(scrollYProgress, "change", (v) => p.set(v));
-  useEffect(() => p.set(scrollYProgress.get()), [p, scrollYProgress]);
+  const [status, setStatus] = useState<"idle" | "playing" | "paused" | "ended">("idle");
+  const playback = useRef<AnimationPlaybackControls | null>(null);
+
+  const stop = useCallback(() => {
+    playback.current?.stop();
+    playback.current = null;
+  }, []);
+  const play = useCallback(
+    (from?: number) => {
+      stop();
+      const start = from ?? (p.get() >= 1 ? 0 : p.get());
+      p.set(start);
+      setStatus("playing");
+      playback.current = animate(p, 1, {
+        duration: JOURNEY_SECONDS * (1 - start),
+        ease: "linear",
+        onComplete: () => setStatus("ended"),
+      });
+    },
+    [p, stop],
+  );
+  const pause = useCallback(() => {
+    stop();
+    setStatus((s) => (s === "playing" ? "paused" : s));
+  }, [stop]);
+  const skip = () => {
+    stop();
+    p.set(1);
+    setStatus("ended");
+  };
+  useEffect(() => stop, [stop]);
+
+  // Si el visitante sigue bajando por la página, el recorrido se pausa
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry && entry.intersectionRatio < 0.5) pause();
+      },
+      { threshold: [0, 0.5] },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [pause]);
+  const progressWidth = useTransform(p, (v) => `${v * 100}%`);
 
   // ── Geometría ────────────────────────────────────────────────
   const isMobile = viewport.width < 768;
@@ -143,17 +186,18 @@ function Journey() {
   });
 
   const goTo = (start: number) => {
-    const el = sectionRef.current;
-    if (!el) return;
-    const top = el.getBoundingClientRect().top + window.scrollY;
-    window.scrollTo({ top: top + (start + 0.01) * (el.offsetHeight - window.innerHeight), behavior: "smooth" });
+    if (status === "playing") return play(start + 0.005);
+    stop();
+    p.set(start + 0.005);
+    setStatus("paused");
   };
+  const active = status !== "idle";
 
   const bandStyle = { width: base.width, height: base.height } as const;
 
   return (
-    <section ref={sectionRef} data-tone={tone} aria-label="La historia de ESTORIA" className="relative h-[620svh] md:h-[760svh]">
-      <div className="sticky top-0 h-svh w-full overflow-hidden">
+    <section ref={sectionRef} data-tone={tone} aria-label="La historia de ESTORIA" className="relative">
+      <div className="relative h-svh w-full overflow-hidden">
         <motion.div aria-hidden className="absolute inset-0" style={{ backgroundColor: background }} />
 
         {/* ── Botella ───────────────────────────── */}
@@ -281,19 +325,28 @@ function Journey() {
                 {story.hero.tagline}
               </motion.p>
             </div>
-            <motion.button
-              type="button"
-              onClick={() => goTo(SCENES[1].start + 0.04)}
-              className="group flex items-center gap-4 text-pergamino/80 transition-colors hover:text-pergamino"
+            <motion.div
+              className="flex flex-col items-center gap-5 md:items-end"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 2.6, duration: 1 }}
+              transition={{ delay: 2.4, duration: 1 }}
             >
-              <span className="eyebrow">{story.hero.scroll}</span>
-              <span aria-hidden className="relative block h-12 w-px overflow-hidden bg-pergamino/25">
-                <span className="absolute inset-x-0 top-0 h-1/2 animate-[scrollcue_2.4s_var(--ease-suave)_infinite] bg-oro-claro" />
-              </span>
-            </motion.button>
+              <button
+                type="button"
+                onClick={() => play(0)}
+                className="flex items-center gap-4 border border-pergamino/45 px-6 py-4 text-pergamino transition-colors duration-500 hover:bg-pergamino/10"
+              >
+                <span aria-hidden className="block h-0 w-0 border-y-[6px] border-l-[10px] border-y-transparent border-l-oro-claro" />
+                <span className="eyebrow">{story.hero.play}</span>
+              </button>
+              <p className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-pergamino/65">
+                <span>{story.hero.playHint}</span>
+                <span aria-hidden>·</span>
+                <a href="#la-marca" className="link-underline text-pergamino/85">
+                  {story.hero.more} ↓
+                </a>
+              </p>
+            </motion.div>
           </div>
         </motion.header>
 
@@ -333,15 +386,20 @@ function Journey() {
 
         {/* ── V · Regreso ───────────────────────── */}
         <motion.div
-          className="absolute inset-0 z-10 grid grid-rows-[auto_1fr] items-center gap-6 px-[var(--gutter)] pb-8 pt-[calc(var(--header-h)+2rem)] md:grid-cols-[1fr_auto_1fr] md:grid-rows-1 md:pt-[var(--header-h)]"
+          className="pointer-events-none absolute inset-0 z-10 grid grid-rows-[auto_1fr] items-center gap-6 px-[var(--gutter)] pb-8 pt-[calc(var(--header-h)+2rem)] md:grid-cols-[1fr_auto_1fr] md:grid-rows-1 md:pt-[var(--header-h)]"
           style={{ opacity: returnOpacity }}
         >
-          <motion.div className="text-center text-tinta md:text-left" style={{ opacity: returnTextOpacity, visibility: returnTextVisibility }}>
+          <motion.div className="pointer-events-auto text-center text-tinta md:text-left" style={{ opacity: returnTextOpacity, visibility: returnTextVisibility }}>
             <p className="eyebrow text-sepia-oscuro">V · El regreso</p>
             <h2 className="display mt-4 text-[clamp(2rem,4.4vw,4rem)]">{story.return.title}</h2>
-            <Link href="/vinos/" className="link-underline eyebrow mt-8 inline-block pb-1 text-borgona">
-              Conocer los vinos
-            </Link>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-8 md:justify-start">
+              <Link href="/vinos/" className="link-underline eyebrow inline-block pb-1 text-borgona">
+                Conocer los vinos
+              </Link>
+              <button type="button" onClick={() => play(0)} className="eyebrow text-sepia-oscuro transition-colors hover:text-tinta">
+                ↺ {story.hero.replay}
+              </button>
+            </div>
           </motion.div>
           <motion.figure className="relative mx-auto h-full max-h-[70svh] min-h-0 md:h-[72svh]" style={{ scale: returnScale }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -351,8 +409,26 @@ function Journey() {
           <div className="hidden md:block" />
         </motion.div>
 
+        {/* ── Controles del recorrido ────────────── */}
+        {active && status !== "ended" && (
+          <div
+            className="absolute bottom-[max(1rem,2.5svh)] left-1/2 z-20 flex -translate-x-1/2 items-center gap-6 whitespace-nowrap rounded-full bg-noche/55 px-5 py-2.5 text-pergamino backdrop-blur-sm"
+          >
+            <button type="button" onClick={() => (status === "playing" ? pause() : play())} className="eyebrow opacity-80 hover:opacity-100">
+              {status === "playing" ? `❚❚ ${story.hero.pause}` : `▶ ${story.hero.resume}`}
+            </button>
+            <button type="button" onClick={skip} className="eyebrow opacity-80 hover:opacity-100">
+              {story.hero.skip} →
+            </button>
+            <span aria-hidden className="relative hidden h-px w-32 bg-current/25 sm:block">
+              <motion.span className="absolute inset-y-0 left-0 bg-current" style={{ width: progressWidth }} />
+            </span>
+          </div>
+        )}
+
         {/* ── Índice de capítulos ───────────────── */}
         <nav
+          hidden={!active}
           aria-label="Capítulos de la historia"
           className={`absolute right-[var(--gutter)] top-1/2 z-20 hidden -translate-y-1/2 transition-colors duration-700 lg:block ${tone === "dark" ? "text-pergamino" : "text-tinta"}`}
         >

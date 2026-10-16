@@ -1,7 +1,6 @@
 "use client";
 
-import { useCallback, useId, useRef, useState, type KeyboardEvent } from "react";
-import dynamic from "next/dynamic";
+import { useId, useRef, useState, type KeyboardEvent } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { story } from "@/content/copy";
@@ -10,14 +9,9 @@ import type { Wine } from "@/content/types";
 import { asset } from "@/lib/asset";
 import { WineSheet } from "./WineSheet";
 import { ProvisionalLabel } from "./ProvisionalLabel";
+import { TurntableViewer } from "./TurntableViewer";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
-
-// Three.js solo se descarga en esta página y en el navegador
-const BottleViewer = dynamic(() => import("./BottleViewer"), {
-  ssr: false,
-  loading: () => null,
-});
 
 export function WineShowcase() {
   const [index, setIndex] = useState(0);
@@ -25,8 +19,6 @@ export function WineShowcase() {
   const tabsId = useId();
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const [sheetOpen, setSheetOpen] = useState(false);
-  const [ready, setReady] = useState<Record<string, boolean>>({});
-  const markReady = useCallback((slug: string) => setReady((r) => (r[slug] ? r : { ...r, [slug]: true })), []);
 
   const select = (i: number, focus = false) => {
     const next = (i + wines.length) % wines.length;
@@ -66,7 +58,7 @@ export function WineShowcase() {
       />
 
       <div className="relative grid min-h-svh items-center gap-8 px-[var(--gutter)] pb-16 pt-[calc(var(--header-h)+2rem)] md:grid-cols-[1.1fr_1fr] md:gap-16 md:pb-20">
-        {/* Escenario 3D */}
+        {/* Escenario de la botella (solo fotografía real) */}
         <div className="relative">
           <div className="relative mx-auto h-[62svh] max-w-[34rem] md:h-[78svh]">
             <AnimatePresence mode="wait" initial={false}>
@@ -78,22 +70,15 @@ export function WineShowcase() {
                 exit={{ opacity: 0, x: -30 }}
                 transition={{ duration: 0.7, ease: EASE }}
               >
-                <div className={`transition-opacity duration-700 ${ready[wine.slug] ? "opacity-0" : "opacity-100"}`}>
-                  <Poster wine={wine} />
-                </div>
-                <div className="absolute inset-0">
-                  <BottleViewer wine={wine} onReady={() => markReady(wine.slug)} />
-                </div>
+                <BottleStage wine={wine} />
               </motion.div>
             </AnimatePresence>
           </div>
-          <p className="eyebrow mt-4 text-center" style={{ color: t.muted }}>
-            {story.collection.viewerHint}
-          </p>
-          <p className="mx-auto mt-2 max-w-[46ch] text-center text-xs leading-relaxed" style={{ color: t.muted }}>
-            Modelo 3D ilustrativo. {wine.label ? "La etiqueta es la original" : "Etiqueta provisional"}; la forma, el vidrio y la cápsula son una
-            representación y pueden diferir de la botella real.
-          </p>
+          {wine.turntable && (
+            <p className="eyebrow mt-4 text-center" style={{ color: t.muted }}>
+              {story.collection.viewerHint}
+            </p>
+          )}
         </div>
 
         {/* Contenido */}
@@ -185,21 +170,28 @@ export function WineShowcase() {
   );
 }
 
-/** Imagen previa mientras se carga el visor 3D (y alternativa sin WebGL). */
-function Poster({ wine }: { wine: Wine }) {
+/**
+ * Escenario de la botella. Solo fotografía real: la vista 360° si ya existen las fotos de la botella
+ * sobre base giratoria; si no, la foto disponible; y, sin foto, la etiqueta provisional rotulada.
+ */
+function BottleStage({ wine }: { wine: Wine }) {
+  const alt = `Botella de ${wine.name} ${wine.variety}`;
+  if (wine.turntable) return <TurntableViewer turntable={wine.turntable} alt={alt} />;
   if (wine.bottle) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
       <img
         src={asset(wine.bottle.src)}
-        alt=""
-        aria-hidden
-        className="absolute inset-0 m-auto h-[70%] w-auto object-contain opacity-30 blur-[2px] [mask-image:radial-gradient(ellipse_52%_54%_at_48.5%_48%,#000_55%,transparent_98%)]"
+        alt={wine.bottle.alt}
+        width={wine.bottle.width}
+        height={wine.bottle.height}
+        className="absolute inset-0 m-auto h-full max-h-[86%] w-auto object-contain [mask-image:radial-gradient(ellipse_58%_56%_at_48.5%_48%,#000_62%,transparent_100%)]"
+        draggable={false}
       />
     );
   }
   return (
-    <div aria-hidden className="absolute inset-0 flex items-center justify-center opacity-40">
+    <div className="absolute inset-0 flex items-center justify-center">
       <ProvisionalLabel wine={wine} />
     </div>
   );

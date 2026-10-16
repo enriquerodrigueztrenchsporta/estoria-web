@@ -31,17 +31,20 @@ export type MediaAsset = {
 };
 
 /**
- * Representación 3D de la botella. La forma, el vidrio y la cápsula son ilustrativos:
- * solo la etiqueta procede del archivo original.
+ * Vista 360° hecha con fotografías reales de la botella (base giratoria).
+ * La genera `npm run turntable` en `src/content/turntables.json`. Ver docs/CONTENIDO.md.
  */
-export type Bottle3D = {
-  /** Color del vidrio */
-  glass: string;
-  /** Vidrio translúcido (deja ver el vino) u opaco */
-  translucent: boolean;
-  /** Color del vino visible a través del vidrio (si es translúcido) */
-  wine?: string;
-  capsule: string;
+export type Turntable = {
+  /** Carpeta pública de los fotogramas */
+  dir: string;
+  /** Fotos por vuelta completa */
+  frames: number;
+  /** Alturas de cámara (1 = solo giro horizontal) */
+  rows: number;
+  /** Fila con la cámara a la altura de la etiqueta */
+  frontRow: number;
+  width: number;
+  height: number;
 };
 
 export type Commerce = {
@@ -70,7 +73,8 @@ export type Wine = {
   theme: Theme;
   bottle: MediaAsset | null;
   label: MediaAsset | null;
-  bottle3d: Bottle3D;
+  /** Vista 360° con fotografías reales; `null` mientras no se hayan hecho las fotos */
+  turntable: Turntable | null;
   /** "en-desarrollo": no existe etiqueta aprobada; se muestra una representación provisional rotulada */
   labelStatus: "definitiva" | "en-desarrollo";
   description: string;

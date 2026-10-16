@@ -4,7 +4,7 @@ import { site } from "@/content/site";
 
 export const metadata: Metadata = {
   title: "Nuestros vinos",
-  description: "ESTORIA Tempranillo y ESTORIA Viura, vinos de la Denominación de Origen Calificada Rioja. Descubre cada botella en 360 grados.",
+  description: "ESTORIA Tempranillo y ESTORIA Viura, vinos de la Denominación de Origen Calificada Rioja. Tipo, variedad y origen de cada vino.",
   alternates: { canonical: `${site.url}/vinos/` },
 };
 

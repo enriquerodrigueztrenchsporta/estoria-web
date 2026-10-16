@@ -26,12 +26,31 @@ Importar `confirmed` desde `./types`. Los datos aparecen automáticamente en la 
 
 1. Exportar la etiqueta a la máxima resolución disponible en `public/media/etiqueta-viura.webp` (con transparencia fuera del papel).
 2. En `src/content/media.ts`, añadir el recurso con `width`, `height` y `alt`.
-3. En `wines.ts` (Viura): `label: media.viuraLabel` y `labelStatus: "definitiva"`. La botella 3D usará automáticamente la etiqueta real, a su tamaño de imprenta (100 × 125 mm).
-4. Ajustar en `bottle3d` el color real del vidrio y de la cápsula.
+3. En `wines.ts` (Viura): `label: media.viuraLabel` y `labelStatus: "definitiva"`.
 
-## 4. Botella y modelo 3D
+## 4. Vista 360° de las botellas (fotografía real)
 
-- La botella 3D de `/vinos/` es **ilustrativa**: forma bordelesa estándar de 75 cl con la etiqueta original. Con un modelo del fabricante (glTF) o una fotogrametría de la botella real, sustituir la geometría en `src/components/product/BottleViewer.tsx`.
+La botella de `/vinos/` se muestra solo con fotografías reales: no hay modelos 3D ni reconstrucciones.
+Mientras no existan las fotos de giro, se muestra la foto disponible (Tempranillo) o la etiqueta provisional (Viura).
+
+**Cómo fotografiar cada botella** (estudio o fotógrafo de producto):
+
+- Base giratoria motorizada o manual con marcas cada 5° (72 fotos por vuelta; 36 como mínimo).
+- Cámara fija en trípode, con la misma exposición, enfoque y balance de blancos en manual en todas las fotos.
+- Fondo liso. Recomendado: el color de la web (#351D22 para el Tempranillo, #FAF7F0 para el Viura) o un fondo neutro para recortarlo después.
+- Luz difusa (cajas de luz o panel grande) para controlar los reflejos del vidrio; botella limpia y sin huellas.
+- Botella entera en el encuadre, de la cápsula a la base, con margen.
+- Para poder inclinar la vista arriba y abajo: repetir la vuelta completa con la cámara a 2 o 3 alturas (p. ej. 15° por debajo, a la altura de la etiqueta y 15° por encima). Con una sola altura la botella solo gira de lado a lado.
+- Primera foto de cada vuelta: la etiqueta de frente. Todas las vueltas en el mismo sentido.
+
+**Cómo incorporarlas:**
+
+1. Copiar las fotos en `source-assets/giro/<vino>/` (`tempranillo` o `viura`). Con varias alturas, una subcarpeta por altura ordenada de la más baja a la más alta: `1-baja/`, `2-media/`, `3-alta/`.
+2. Ejecutar `npm run turntable -- <vino>`. Opciones: `--recorte izq,arriba,der,abajo` (mismo recorte para todas), `--altura 1600`, `--frontal N`.
+3. El script genera `public/media/giro/<vino>/` y añade el vino a `src/content/turntables.json`. La web lo usa automáticamente; los tests comprueban que existen todos los fotogramas.
+
+Peso orientativo: 72 fotos × 3 alturas a 1600 px de alto en WebP ≈ 10–15 MB por botella. Se descargan de forma progresiva: primero la vuelta frontal.
+
 - Si cambia la foto del Tempranillo, recalibrar `bottleLabelBox` en `media.ts` para que el texto de la etiqueta en la foto coincida con el del archivo original durante el fundido del recorrido.
 
 ## 5. Fotografías
@@ -45,6 +64,7 @@ Dónde se usa cada foto:
 |---|---|---|
 | Recorrido de inicio | `riojaPhotos` | `site.ts` |
 | Página Rioja | `riojaGallery` | `editorial.ts` |
+| Textos de todas las páginas | `story` | `copy.ts` |
 | La mesa | `tablePhotos` | `editorial.ts` |
 
 Requisitos de cada foto:

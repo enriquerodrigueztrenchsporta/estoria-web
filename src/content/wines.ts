@@ -1,5 +1,9 @@
 import { media } from "./media";
-import { pending, type TechnicalSheet, type Wine } from "./types";
+import turntableData from "./turntables.json";
+import { pending, type TechnicalSheet, type Turntable, type Wine } from "./types";
+
+/** Vistas 360° generadas por `npm run turntable` a partir de las fotos reales de cada botella. */
+const turntables = turntableData as Record<string, Turntable>;
 
 /**
  * Catálogo de ESTORIA. Para añadir un vino basta con añadir una entrada.
@@ -27,7 +31,7 @@ export const wines: Wine[] = [
     bottle: media.tempranilloBottle,
     label: media.tempranilloLabel,
     labelStatus: "definitiva",
-    bottle3d: { glass: "#1a110e", translucent: false, capsule: "#2b1a1c" },
+    turntable: turntables.tempranillo ?? null,
     description: "Vino tinto de la Denominación de Origen Calificada Rioja, elaborado con Tempranillo.",
     technical: emptySheet(),
     commerce: { sku: pending(), price: pending(), available: pending() },
@@ -42,7 +46,7 @@ export const wines: Wine[] = [
     bottle: null,
     label: null,
     labelStatus: "en-desarrollo",
-    bottle3d: { glass: "#e4ead2", translucent: true, wine: "#e8d58f", capsule: "#d9cfb8" },
+    turntable: turntables.viura ?? null,
     description: "Vino blanco de la Denominación de Origen Calificada Rioja, elaborado con Viura.",
     technical: emptySheet(),
     commerce: { sku: pending(), price: pending(), available: pending() },

@@ -8,6 +8,12 @@ import { LabelCrop } from "@/components/ui/LabelCrop";
 import { PhotoFigure } from "./PhotoFigure";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
+const reveal = (delay = 0) => ({
+  initial: { opacity: 0, y: 24 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, margin: "-12% 0px" },
+  transition: { duration: 1.1, delay, ease: EASE },
+});
 
 /** Página Rioja: el grabado de la etiqueta y el lema, seguidos de paisajes reales de la Denominación. */
 export function RiojaChapter() {
@@ -69,6 +75,64 @@ export function RiojaChapter() {
               >
                 {p}
               </motion.p>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Tradición vinícola de Rioja */}
+      <section aria-labelledby="tradicion" data-tone="dark" className="bg-noche py-24 text-pergamino md:py-36">
+        <div className="container-editorial">
+          <div className="grid gap-12 md:grid-cols-12 md:gap-8">
+            <motion.div className="md:col-span-5" {...reveal()}>
+              <p className="eyebrow text-oro-claro">{copy.tradition.eyebrow}</p>
+              <h2 id="tradicion" className="display mt-6 text-[clamp(2.4rem,5vw,4.5rem)]">
+                {copy.tradition.title}
+              </h2>
+            </motion.div>
+            <div className="space-y-6 md:col-span-6 md:col-start-7 md:pt-4">
+              {copy.tradition.paragraphs.map((text, i) => (
+                <motion.p key={i} className="text-lg leading-relaxed text-pergamino/80" {...reveal(0.1 * i)}>
+                  {text}
+                </motion.p>
+              ))}
+            </div>
+          </div>
+          <dl className="mt-20 grid gap-10 border-t border-pergamino/20 pt-10 md:mt-28 md:grid-cols-3">
+            {copy.tradition.facts.map((f, i) => (
+              <motion.div key={f.value} {...reveal(0.1 * i)}>
+                <dt className="sr-only">{f.label}</dt>
+                <dd>
+                  <span className="display block text-6xl text-oro-claro md:text-7xl">{f.value}</span>
+                  <span className="mt-3 block max-w-[28ch] text-sm leading-relaxed text-pergamino/70">{f.label}</span>
+                </dd>
+              </motion.div>
+            ))}
+          </dl>
+        </div>
+      </section>
+
+      {/* Las variedades de ESTORIA */}
+      <section aria-labelledby="uvas" data-tone="light" className="bg-papel py-24 md:py-36">
+        <div className="container-editorial">
+          <motion.div className="mx-auto max-w-3xl text-center" {...reveal()}>
+            <p className="eyebrow text-sepia-oscuro">{copy.grapes.eyebrow}</p>
+            <h2 id="uvas" className="display mt-6 text-[clamp(2.4rem,5vw,4.5rem)]">
+              {copy.grapes.title}
+            </h2>
+            <p className="mt-6 text-lg leading-relaxed text-sepia-oscuro">{copy.grapes.intro}</p>
+          </motion.div>
+          <div className="mt-16 grid gap-6 md:mt-24 md:grid-cols-2 md:gap-8">
+            {copy.grapes.items.map((g, i) => (
+              <motion.article
+                key={g.name}
+                className={`px-8 py-12 md:px-12 md:py-16 ${i === 0 ? "bg-vino text-pergamino" : "bg-marfil text-tinta"}`}
+                {...reveal(0.12 * i)}
+              >
+                <p className={`eyebrow ${i === 0 ? "text-oro-claro" : "text-sepia-oscuro"}`}>{g.kind}</p>
+                <h3 className="display mt-4 text-[clamp(2.5rem,5vw,4rem)] uppercase tracking-[0.04em]">{g.name}</h3>
+                <p className={`mt-6 max-w-[44ch] text-lg leading-relaxed ${i === 0 ? "text-pergamino/80" : "text-sepia-oscuro"}`}>{g.text}</p>
+              </motion.article>
             ))}
           </div>
         </div>

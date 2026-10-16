@@ -38,11 +38,18 @@ Decisiones técnicas:
 - En pantallas verticales, el paisaje se encuadra más cerrado, siempre dentro del límite de resolución.
 - Con `prefers-reduced-motion` se muestra `StaticJourney`: el mismo contenido y el mismo orden, sin movimiento.
 
+## Cambios v3 (16/10/2026)
+
+- El recorrido de inicio deja de depender del scroll: ocupa una sola pantalla y se reproduce (20 s, `JOURNEY_SECONDS`) solo si el visitante pulsa «Ver la historia». Se puede pausar, saltar o volver a ver; se pausa solo si el visitante sigue bajando. Las progresiones de la tabla anterior son ahora fracciones de esos 20 s.
+- Debajo del recorrido, la presentación de la marca (`BrandIntro`) sustituye al índice de páginas.
+- La botella 3D se retira por poco realista. `/vinos/` usa solo fotografía real: vista 360° a partir de fotos sobre base giratoria (`TurntableViewer`), o la foto disponible mientras no existan.
+- `/rioja/` incorpora la tradición vinícola de la Denominación y las dos variedades; `/mesa/`, cuatro momentos de consumo.
+
 ## Sistema visual
 
 - **Color:** tokens en `src/app/globals.css` (`@theme`): pergamino, papel, marfil, borgoña, vino, noche, tinta, oro, sepia, viñedo y rojo etiqueta.
 - **Tipografía:** Cormorant Garamond para titulares (la más cercana a la serif de la etiqueta) e Inter para lectura. `.wordmark` con tracking amplio y `.eyebrow` en versalitas de 11 px.
 - **Grid:** contenedor de 90 rem con margen lateral `clamp(1.25rem, 4vw, 3.5rem)`; composiciones de 12 columnas asimétricas.
 - **Movimiento:** curva `cubic-bezier(0.22, 1, 0.36, 1)`. Cada capítulo tiene un gesto propio: cámara, cambio de luz, recorte, aparición palabra a palabra.
-- **Botella 3D (/vinos/):** bordelesa de 75 cl modelada por revolución (300 × 75 mm), etiqueta original a su tamaño de imprenta (100 × 125 mm, unos 153° del contorno), giro libre en cualquier dirección con arrastre e inercia, teclado y botones, y vista frontal. Forma, vidrio y cápsula son ilustrativos y se indica así bajo el visor.
+- **Vista 360° (/vinos/):** fotogramas reales en un canvas; arrastre horizontal para girar (con inercia), vertical para cambiar la altura de cámara, flechas del teclado. Carga progresiva empezando por la vuelta frontal.
 - **Breakpoints:** los de Tailwind (`md` 768 px y `lg` 1024 px). El índice de capítulos solo aparece desde `lg`.
