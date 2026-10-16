@@ -46,10 +46,11 @@ function Journey() {
   const p = useMotionValue(0);
   const [status, setStatus] = useState<"idle" | "playing" | "paused" | "ended">("idle");
   const playback = useRef<AnimationPlaybackControls | null>(null);
-  // Música: con sonido, el audio marca el tiempo, así música e imagen terminan a la vez
+  // La imagen lleva su propio reloj y llega siempre al final; la música la acompaña y se resincroniza
+  // si se desvía. Si el navegador bloquea o interrumpe el audio, el recorrido sigue igualmente.
   const [sound, setSound] = useState(true);
   const audio = useRef<HTMLAudioElement | null>(null);
-  const raf = useRef(0);
+  const sync = useRef<number | undefined>(undefined);
 
   const getAudio = () => {
     if (!audio.current) {
@@ -62,18 +63,21 @@ function Journey() {
   const stop = useCallback(() => {
     playback.current?.stop();
     playback.current = null;
-    cancelAnimationFrame(raf.current);
+    window.clearInterval(sync.current);
     audio.current?.pause();
   }, []);
 
-  const runSilent = useCallback(
+  const startMusic = useCallback(
     (start: number) => {
-      playback.current = animate(p, 1, {
-        duration: JOURNEY_SECONDS * (1 - start),
-        ease: "linear",
-        onComplete: () => setStatus("ended"),
-      });
+      const a = getAudio();
+      a.currentTime = start * JOURNEY_SECONDS;
+      a.play().catch(() => setSound(false));
+      sync.current = window.setInterval(() => {
+        const target = p.get() * JOURNEY_SECONDS;
+        if (!a.paused && Math.abs(a.currentTime - target) > 0.35) a.currentTime = target;
+      }, 1000);
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [p],
   );
 
@@ -83,31 +87,24 @@ function Journey() {
       const start = from ?? (p.get() >= 1 ? 0 : p.get());
       p.set(start);
       setStatus("playing");
-      if (!withSound) return runSilent(start);
-      const a = getAudio();
-      a.currentTime = start * JOURNEY_SECONDS;
-      const follow = () => {
-        p.set(Math.min(1, a.currentTime / JOURNEY_SECONDS));
-        if (a.ended) {
-          p.set(1);
+      playback.current = animate(p, 1, {
+        duration: JOURNEY_SECONDS * (1 - start),
+        ease: "linear",
+        onComplete: () => {
+          window.clearInterval(sync.current);
           setStatus("ended");
-          return;
-        }
-        if (!a.paused) raf.current = requestAnimationFrame(follow);
-      };
-      a.play()
-        .then(() => {
-          raf.current = requestAnimationFrame(follow);
-        })
-        .catch(() => {
-          // El navegador ha bloqueado el audio: el recorrido sigue sin sonido
-          setSound(false);
-          runSilent(start);
-        });
+        },
+      });
+      if (withSound) startMusic(start);
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [p, stop, runSilent, sound],
+    [p, stop, startMusic, sound],
   );
+  /** Empieza desde el principio con el escenario ocupando toda la pantalla. */
+  const playFromStart = () => {
+    const el = sectionRef.current;
+    if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY, behavior: "smooth" });
+    play(0);
+  };
   const pause = useCallback(() => {
     stop();
     setStatus((s) => (s === "playing" ? "paused" : s));
@@ -120,20 +117,33 @@ function Journey() {
   const toggleSound = () => {
     const next = !sound;
     setSound(next);
-    if (status === "playing") play(p.get(), next);
+    if (status !== "playing") return;
+    if (next) startMusic(p.get());
+    else {
+      window.clearInterval(sync.current);
+      audio.current?.pause();
+    }
   };
   useEffect(() => stop, [stop]);
 
+  // Si se cambia de pestaña o se bloquea el móvil, el recorrido se pausa (y se puede continuar)
+  useEffect(() => {
+    const onHide = () => {
+      if (document.hidden) pause();
+    };
+    document.addEventListener("visibilitychange", onHide);
+    return () => document.removeEventListener("visibilitychange", onHide);
+  }, [pause]);
 
-  // Si el visitante sigue bajando por la página, el recorrido se pausa
+  // Solo se pausa si el visitante se va claramente a otra parte de la página (no por un roce al hacer scroll)
   useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
     const io = new IntersectionObserver(
       ([entry]) => {
-        if (entry && entry.intersectionRatio < 0.5) pause();
+        if (entry && entry.intersectionRatio < 0.2) pause();
       },
-      { threshold: [0, 0.5] },
+      { threshold: [0, 0.2] },
     );
     io.observe(el);
     return () => io.disconnect();
@@ -389,7 +399,7 @@ function Journey() {
             >
               <button
                 type="button"
-                onClick={() => play(0)}
+                onClick={playFromStart}
                 className="flex items-center gap-4 border border-pergamino/45 px-6 py-4 text-pergamino transition-colors duration-500 hover:bg-pergamino/10"
               >
                 <span aria-hidden className="block h-0 w-0 border-y-[6px] border-l-[10px] border-y-transparent border-l-oro-claro" />
@@ -452,7 +462,7 @@ function Journey() {
               <Link href="/vinos/" className="link-underline eyebrow inline-block pb-1 text-borgona">
                 Conocer los vinos
               </Link>
-              <button type="button" onClick={() => play(0)} className="eyebrow text-sepia-oscuro transition-colors hover:text-tinta">
+              <button type="button" onClick={playFromStart} className="eyebrow text-sepia-oscuro transition-colors hover:text-tinta">
                 ↺ {story.hero.replay}
               </button>
             </div>
@@ -539,7 +549,7 @@ function RiojaPhoto({ photo, p, index }: { photo: Photo; p: MotionValue<number>;
         srcSet={`${asset(photo.srcSmall)} 1200w, ${asset(photo.src)} 2400w`}
         sizes="100vw"
         alt=""
-        loading="lazy"
+        loading="eager"
         decoding="async"
         className="h-full w-full object-cover"
         style={{ scale }}

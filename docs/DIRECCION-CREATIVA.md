@@ -47,8 +47,10 @@ Decisiones técnicas:
 
 ## Cambios v4 (16/10/2026)
 
-- El recorrido lleva música (Satie, Gymnopédie n.º 1, 20 s). Con sonido, el reloj del recorrido es el propio audio, así que
-  música e imagen terminan a la vez. Botones de pausa, saltar y sonido. Si el navegador bloquea el audio, sigue en silencio.
+- El recorrido lleva música (Satie, Gymnopédie n.º 1, 20 s). La imagen tiene su propio reloj y llega siempre al final; la
+  música la acompaña y se resincroniza si se desvía, de modo que un corte del audio nunca detiene la imagen. Al empezar, la
+  página se coloca para que el escenario ocupe la pantalla; solo se pausa al salir claramente de él (menos del 20 % visible)
+  o al cambiar de pestaña / bloquear el móvil. Botones de pausa, saltar y sonido.
   Se probó una voz narrada sintética (Piper) y se retiró a petición de la marca por no sonar natural.
 - La mesa: portada con copa de tinto, sección «Dos vinos, dos mesas» (tinto con cocido, blanco con pescado) y momentos.
 - Viura con la etiqueta del Tempranillo cambiando solo la variedad.
