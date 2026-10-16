@@ -15,16 +15,22 @@
 2. Bodegón nocturno: claroscuro en toda la web. Requiere fotografía inexistente.
 3. Cuaderno de Rioja: libro de viaje ilustrado. Riesgo de parecer antigua.
 
-## Storyboard (progreso de scroll de la sección `#historia`, `lib/timeline.ts`)
+## Storyboard v2 (16/10/2026)
+
+Cambios pedidos por el cliente: el recorrido ya no repasa los textos de la etiqueta (se mantienen los colores) y cada
+apartado es una página propia. Progreso de scroll de la sección de inicio (`lib/timeline.ts`):
 
 | Escena | Progreso | Cámara y capas | Fondo | Texto |
 |---|---|---|---|---|
-| I · Revelación | 0–0,08 | Botella centrada; máscara de luz lateral animada en el tiempo (2,8 s) + brillo sobre el vidrio | #120A0C | ESTORIA + lema, indicador de scroll |
-| II · Aproximación | 0,08–0,22 | Zoom sincronizado hacia el centro de la etiqueta; fundido a la etiqueta en alta resolución a igual altura | aclara a #3B2621 | — |
-| III · La etiqueta | 0,22–0,50 | Recorrido: RIOJA → nombre → detalle de la iglesia | #4A3328 | 3 rótulos |
-| IV · El grabado | 0,50–0,71 | Desaparecen los textos impresos; el grabado se separa en dos capas (pueblo/montañas y viñedos), los viñedos pasan junto a la cámara; luz dorada | papel #E6DAC7 | «Toda historia tiene un origen.» / «El nuestro se expresa en Rioja.» |
-| V · Rioja | 0,71–0,88 | Panorámica lateral sobre el pueblo; el tono de luz cambia (mañana, mediodía, tarde) | papel | 3 frases |
-| VI · Regreso | 0,88–1 | Vuelve la botella como lámina editorial; la cámara se aleja | pergamino | «El carácter de Rioja, en ESTORIA.» |
+| I · Revelación | 0–0,08 | Botella centrada; máscara de luz lateral animada en el tiempo + brillo sobre el vidrio | #120A0C | ESTORIA + lema |
+| II · Aproximación | 0,08–0,28 | Zoom hacia la etiqueta y fundido directo a la etiqueta original, calibrado para que el texto coincida | aclara a #4A3328 | — |
+| III · El origen | 0,28–0,55 | Desaparece el texto impreso; el grabado se separa en capas, los viñedos pasan junto a la cámara; luz dorada | papel #E6DAC7 | «Toda historia tiene un origen.» / «El nuestro se expresa en Rioja.» |
+| IV · Rioja | 0,55–0,86 | El pueblo del grabado se funde con Briones (foto real); siguen Elvillar en otoño, con movimiento lento de cámara | foto | 3 frases + crédito de cada foto |
+| V · Regreso | 0,86–1 | Vuelve la botella como lámina editorial; enlace a /vinos/ | pergamino | «El carácter de Rioja, en ESTORIA.» |
+
+La página `/rioja/` muestra el grabado de la etiqueta con el lema «La tierra guarda memoria y cada historia encuentra su
+momento» y una galería de paisajes reales de la DOCa. El universo de marca (paleta, explicación de la etiqueta), el
+explorador de detalles de la etiqueta y la sección de profesionales se retiraron a petición del cliente.
 
 Decisiones técnicas:
 - Un solo valor de progreso alimenta todas las capas, sin animaciones independientes. Motion 12 acelera la opacidad con `ScrollTimeline` nativo y eso desincronizaba las capas. Por eso el progreso se replica en un `MotionValue` propio.
@@ -37,5 +43,6 @@ Decisiones técnicas:
 - **Color:** tokens en `src/app/globals.css` (`@theme`): pergamino, papel, marfil, borgoña, vino, noche, tinta, oro, sepia, viñedo y rojo etiqueta.
 - **Tipografía:** Cormorant Garamond para titulares (la más cercana a la serif de la etiqueta) e Inter para lectura. `.wordmark` con tracking amplio y `.eyebrow` en versalitas de 11 px.
 - **Grid:** contenedor de 90 rem con margen lateral `clamp(1.25rem, 4vw, 3.5rem)`; composiciones de 12 columnas asimétricas.
-- **Movimiento:** curva `cubic-bezier(0.22, 1, 0.36, 1)`. Cada capítulo tiene un gesto propio: cámara, cambio de luz, zoom de detalle, recorte, aparición palabra a palabra.
+- **Movimiento:** curva `cubic-bezier(0.22, 1, 0.36, 1)`. Cada capítulo tiene un gesto propio: cámara, cambio de luz, recorte, aparición palabra a palabra.
+- **Botella 3D (/vinos/):** bordelesa de 75 cl modelada por revolución (300 × 75 mm), etiqueta original a su tamaño de imprenta (100 × 125 mm, unos 153° del contorno), giro libre en cualquier dirección con arrastre e inercia, teclado y botones, y vista frontal. Forma, vidrio y cápsula son ilustrativos y se indica así bajo el visor.
 - **Breakpoints:** los de Tailwind (`md` 768 px y `lg` 1024 px). El índice de capítulos solo aparece desde `lg`.

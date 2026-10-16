@@ -24,9 +24,10 @@ export const media = {
 
 /**
  * Posición de la etiqueta dentro de la fotografía de la botella (fracciones de la foto).
- * Permite encadenar la foto con la etiqueta en alta resolución sin saltos.
+ * Calibrada visualmente para que el texto impreso de la foto (ESTORIA, TEMPRANILLO) coincida
+ * con el del archivo original durante el fundido; no es el borde físico del papel.
  */
-export const bottleLabelBox = { left: 0.097, right: 0.873, top: 0.084, bottom: 0.876 } as const;
+export const bottleLabelBox = { left: 0.097, right: 0.873, top: 0.153, bottom: 0.856 } as const;
 
 /** Bandas del grabado dentro de la etiqueta (fracciones verticales de la etiqueta). */
 export const engravingBands = {
@@ -35,7 +36,7 @@ export const engravingBands = {
   /** Pueblo e iglesia */
   mid: { top: 0.386, bottom: 0.65 },
   /** Viñedos en primer plano */
-  near: { top: 0.6, bottom: 0.815 },
+  near: { top: 0.6, bottom: 0.8 },
 } as const;
 
 /** Centro del grabado (para encuadres de cámara). */

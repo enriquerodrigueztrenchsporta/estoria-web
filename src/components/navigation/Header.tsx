@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import { site } from "@/content/site";
 
@@ -8,6 +10,7 @@ type Tone = "dark" | "light";
 
 /** Lee el tono (`data-tone`) de la sección que queda bajo la cabecera. */
 function useToneUnderHeader(): { tone: Tone; scrolled: boolean } {
+  const pathname = usePathname();
   const [state, setState] = useState<{ tone: Tone; scrolled: boolean }>({ tone: "dark", scrolled: false });
   useEffect(() => {
     let raf = 0;
@@ -40,13 +43,20 @@ function useToneUnderHeader(): { tone: Tone; scrolled: boolean } {
       window.removeEventListener("resize", onScroll);
       cancelAnimationFrame(raf);
     };
-  }, []);
+  }, [pathname]);
   return state;
 }
 
+/** Normaliza rutas para comparar (sin basePath ni barra final). */
+const same = (a: string, b: string) => a.replace(/\/+$/, "") === b.replace(/\/+$/, "");
+
 export function Header() {
   const { tone, scrolled } = useToneUnderHeader();
+  const pathname = usePathname() ?? "/";
   const [open, setOpen] = useState(false);
+
+  // Cerrar el menú al cambiar de página
+  useEffect(() => setOpen(false), [pathname]);
   const panelRef = useRef<HTMLDivElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
 
@@ -90,26 +100,27 @@ export function Header() {
   return (
     <header data-site-header className={`fixed inset-x-0 top-0 z-50 transition-colors duration-700 ${surface} ${ink}`}>
       <div className="container-editorial flex h-[var(--header-h)] items-center justify-between">
-        <a href="#historia" className="wordmark text-lg tracking-[0.3em]" onClick={() => setOpen(false)} aria-label="ESTORIA, inicio">
+        <Link href="/" className="wordmark text-lg tracking-[0.3em]" aria-label="ESTORIA, inicio">
           ESTORIA
-        </a>
+        </Link>
 
         <nav aria-label="Principal" className="hidden items-center gap-10 md:flex">
           <ul className="flex items-center gap-8">
-            {site.nav.map((item) => (
-              <li key={item.href}>
-                <a href={item.href} className="link-underline eyebrow pb-1 opacity-85 transition-opacity hover:opacity-100">
-                  {item.label}
-                </a>
-              </li>
-            ))}
+            {site.nav.map((item) => {
+              const active = same(pathname, item.href);
+              return (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    aria-current={active ? "page" : undefined}
+                    className={`link-underline eyebrow pb-1 transition-opacity hover:opacity-100 ${active ? "bg-[length:100%_1px] opacity-100" : "opacity-80"}`}
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
-          <a
-            href={site.professionalLink.href}
-            className={`eyebrow border px-4 py-2 transition-colors duration-500 ${dark ? "border-pergamino/35 hover:bg-pergamino hover:text-tinta" : "border-tinta/30 hover:bg-tinta hover:text-pergamino"}`}
-          >
-            {site.professionalLink.label}
-          </a>
         </nav>
 
         <button
@@ -139,17 +150,22 @@ export function Header() {
           >
             <nav aria-label="Menú móvil" className="container-editorial py-8">
               <ul className="space-y-1">
-                {[...site.nav, site.professionalLink].map((item, i) => (
+                {site.nav.map((item, i) => (
                   <motion.li
                     key={item.href}
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.12 + i * 0.05, duration: 0.5 }}
                   >
-                    <a href={item.href} onClick={() => setOpen(false)} className="display flex items-baseline gap-4 py-2 text-3xl">
+                    <Link
+                      href={item.href}
+                      onClick={() => setOpen(false)}
+                      aria-current={same(pathname, item.href) ? "page" : undefined}
+                      className="display flex items-baseline gap-4 py-2 text-3xl aria-[current=page]:text-borgona"
+                    >
                       <span className="eyebrow text-sepia-oscuro">{String(i + 1).padStart(2, "0")}</span>
                       {item.label}
-                    </a>
+                    </Link>
                   </motion.li>
                 ))}
               </ul>

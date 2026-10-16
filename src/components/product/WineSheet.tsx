@@ -61,8 +61,8 @@ export function WineSheet({ wine, open, onClose }: { wine: Wine; open: boolean; 
           <p className="mt-4 text-sm text-sepia-oscuro">La etiqueta definitiva de este vino está en desarrollo.</p>
         )}
 
-        <a href="#profesionales" onClick={onClose} className="link-underline eyebrow mt-10 inline-block pb-1 text-borgona">
-          Solicitar información profesional
+        <a href={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/contacto/`} onClick={onClose} className="link-underline eyebrow mt-10 inline-block pb-1 text-borgona">
+          Solicitar información
         </a>
       </div>
     </dialog>

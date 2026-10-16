@@ -30,17 +30,18 @@ export type MediaAsset = {
   alt: string;
 };
 
-/** Zona de interés de una etiqueta, en coordenadas normalizadas (0–1) de la imagen. */
-export type LabelRegion = {
-  id: string;
-  index: string;
-  title: string;
-  caption: string;
-  /** Centro de la zona */
-  cx: number;
-  cy: number;
-  /** Fracción del ancho de la etiqueta que debe llenar la vista al ampliar */
-  span: number;
+/**
+ * Representación 3D de la botella. La forma, el vidrio y la cápsula son ilustrativos:
+ * solo la etiqueta procede del archivo original.
+ */
+export type Bottle3D = {
+  /** Color del vidrio */
+  glass: string;
+  /** Vidrio translúcido (deja ver el vino) u opaco */
+  translucent: boolean;
+  /** Color del vino visible a través del vidrio (si es translúcido) */
+  wine?: string;
+  capsule: string;
 };
 
 export type Commerce = {
@@ -69,7 +70,7 @@ export type Wine = {
   theme: Theme;
   bottle: MediaAsset | null;
   label: MediaAsset | null;
-  labelRegions: LabelRegion[];
+  bottle3d: Bottle3D;
   /** "en-desarrollo": no existe etiqueta aprobada; se muestra una representación provisional rotulada */
   labelStatus: "definitiva" | "en-desarrollo";
   description: string;

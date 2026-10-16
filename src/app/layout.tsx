@@ -1,8 +1,13 @@
 import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Inter } from "next/font/google";
+import { Header } from "@/components/navigation/Header";
+import { Footer } from "@/components/layout/Footer";
+import { AgeGate } from "@/components/legal/AgeGate";
+import { CookieBanner } from "@/components/legal/CookieBanner";
 import { site } from "@/content/site";
 import "./globals.css";
 
+// next/font descarga las tipografías al compilar y las sirve desde el propio sitio (sin peticiones a Google)
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
@@ -42,13 +47,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="es" className={`${cormorant.variable} ${inter.variable}`}>
       <body>
-        <a
-          href="#contenido"
-          className="sr-only-focusable fixed left-4 top-4 z-[100] bg-tinta px-4 py-3 text-sm text-pergamino"
-        >
+        <a href="#contenido" className="sr-only-focusable fixed left-4 top-4 z-[100] bg-tinta px-4 py-3 text-sm text-pergamino">
           Saltar al contenido
         </a>
-        {children}
+        <Header />
+        <main id="contenido">{children}</main>
+        <Footer />
+        <AgeGate />
+        <CookieBanner />
       </body>
     </html>
   );

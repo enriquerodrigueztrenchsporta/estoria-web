@@ -4,77 +4,84 @@ import { InquiryForm } from "@/components/forms/InquiryForm";
 import { submitInquiry } from "@/lib/submit";
 import { emptyInquiry, isValid, validateInquiry, type InquiryData } from "@/lib/validation";
 
-const validPro = (): InquiryData => ({
-  ...emptyInquiry("profesional"),
+vi.mock("next/link", () => ({
+  default: ({ href, children, ...rest }: { href: string; children: React.ReactNode }) => (
+    <a href={href} {...rest}>
+      {children}
+    </a>
+  ),
+}));
+
+const valid = (): InquiryData => ({
+  ...emptyInquiry(),
   name: "Ana López",
   company: "Casa Ejemplo",
-  establishment: "Restaurante",
-  city: "Logroño",
   email: "ana@example.com",
+  topic: "Distribución",
   message: "Querríamos información para nuestra carta.",
-  consent: true,
+  privacy: true,
 });
 
 describe("validación", () => {
-  it("acepta una consulta profesional completa", () => {
-    expect(isValid(validateInquiry(validPro()))).toBe(true);
+  it("acepta una consulta completa", () => {
+    expect(isValid(validateInquiry(valid()))).toBe(true);
   });
 
-  it("exige los campos obligatorios", () => {
-    const e = validateInquiry(emptyInquiry("profesional"));
-    expect(Object.keys(e).sort()).toEqual(["city", "company", "consent", "email", "establishment", "message", "name"].sort());
+  it("exige los campos obligatorios y la aceptación de la privacidad", () => {
+    const e = validateInquiry(emptyInquiry());
+    expect(Object.keys(e).sort()).toEqual(["email", "message", "name", "privacy", "topic"].sort());
   });
 
-  it("detecta correo y teléfono no válidos; el teléfono es opcional", () => {
-    expect(validateInquiry({ ...validPro(), email: "ana@" }).email).toBeDefined();
-    expect(validateInquiry({ ...validPro(), phone: "abc" }).phone).toBeDefined();
-    expect(validateInquiry({ ...validPro(), phone: "" }).phone).toBeUndefined();
-    expect(validateInquiry({ ...validPro(), phone: "+34 600 000 000" }).phone).toBeUndefined();
+  it("empresa y teléfono son opcionales, pero el teléfono debe ser válido si se indica", () => {
+    expect(validateInquiry({ ...valid(), company: "", phone: "" })).toEqual({});
+    expect(validateInquiry({ ...valid(), phone: "abc" }).phone).toBeDefined();
+    expect(validateInquiry({ ...valid(), phone: "+34 600 000 000" }).phone).toBeUndefined();
   });
 
-  it("la consulta general exige motivo", () => {
-    const base = { ...validPro(), kind: "general" as const };
-    expect(validateInquiry(base).topic).toBeDefined();
-    expect(validateInquiry({ ...base, topic: "Distribución" }).topic).toBeUndefined();
+  it("detecta correos no válidos", () => {
+    expect(validateInquiry({ ...valid(), email: "ana@" }).email).toBeDefined();
+  });
+
+  it("sin aceptar la política de privacidad no se puede enviar", () => {
+    expect(validateInquiry({ ...valid(), privacy: false }).privacy).toBeDefined();
   });
 });
 
 describe("envío", () => {
   it("sin endpoint no envía nada", async () => {
     const f = vi.fn();
-    expect(await submitInquiry(validPro(), "", f as unknown as typeof fetch)).toEqual({ status: "disabled" });
+    expect(await submitInquiry(valid(), "", f as unknown as typeof fetch)).toEqual({ status: "disabled" });
     expect(f).not.toHaveBeenCalled();
   });
 
   it("solo confirma con respuesta 2xx", async () => {
     const ok = vi.fn().mockResolvedValue({ ok: true, status: 200 });
     const ko = vi.fn().mockResolvedValue({ ok: false, status: 500 });
-    expect((await submitInquiry(validPro(), "https://x.test", ok as unknown as typeof fetch)).status).toBe("sent");
-    expect((await submitInquiry(validPro(), "https://x.test", ko as unknown as typeof fetch)).status).toBe("error");
+    expect((await submitInquiry(valid(), "https://x.test", ok as unknown as typeof fetch)).status).toBe("sent");
+    expect((await submitInquiry(valid(), "https://x.test", ko as unknown as typeof fetch)).status).toBe("error");
   });
 
   it("los errores de red no se presentan como éxito", async () => {
     const boom = vi.fn().mockRejectedValue(new Error("offline"));
-    expect((await submitInquiry(validPro(), "https://x.test", boom as unknown as typeof fetch)).status).toBe("error");
+    expect((await submitInquiry(valid(), "https://x.test", boom as unknown as typeof fetch)).status).toBe("error");
   });
 });
 
 describe("<InquiryForm />", () => {
-  it("muestra errores al enviar vacío", async () => {
-    render(<InquiryForm kind="profesional" endpoint="" />);
+  it("muestra errores al enviar vacío y enlaza la política de privacidad", async () => {
+    render(<InquiryForm endpoint="" />);
     fireEvent.click(screen.getByRole("button", { name: /enviar consulta/i }));
     expect(await screen.findByText("Indica tu nombre.")).toBeTruthy();
-    expect(screen.getByLabelText("Nombre").getAttribute("aria-invalid")).toBe("true");
+    expect(screen.getByText(/Debes aceptar la política de privacidad/)).toBeTruthy();
+    expect(screen.getAllByRole("link", { name: /política de privacidad/i })[0]!.getAttribute("href")).toBe("/privacidad/");
   });
 
   it("sin integración avisa de que no se ha enviado ningún dato (nunca finge éxito)", async () => {
-    render(<InquiryForm kind="profesional" endpoint="" />);
-    const v = validPro();
+    render(<InquiryForm endpoint="" />);
+    const v = valid();
     fireEvent.change(screen.getByLabelText("Nombre"), { target: { value: v.name } });
-    fireEvent.change(screen.getByLabelText("Empresa"), { target: { value: v.company } });
-    fireEvent.change(screen.getByLabelText("Tipo de establecimiento"), { target: { value: v.establishment } });
-    fireEvent.change(screen.getByLabelText("Ciudad"), { target: { value: v.city } });
     fireEvent.change(screen.getByLabelText("Correo electrónico"), { target: { value: v.email } });
+    fireEvent.click(screen.getByLabelText("Distribución"));
     fireEvent.change(screen.getByLabelText("Mensaje"), { target: { value: v.message } });
     fireEvent.click(screen.getByRole("checkbox"));
     fireEvent.click(screen.getByRole("button", { name: /enviar consulta/i }));
