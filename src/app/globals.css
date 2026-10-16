@@ -1,0 +1,152 @@
+@import "tailwindcss";
+
+/* ───────────── Sistema visual ESTORIA ─────────────
+   Paleta tomada de la etiqueta: papel, tinta, rojo vino de RIOJA/TEMPRANILLO y el oro del ornamento. */
+@theme {
+  --color-pergamino: #f4ebdd;
+  --color-papel: #e6dac7;
+  --color-marfil: #faf7f0;
+  --color-borgona: #622c32;
+  --color-vino: #351d22;
+  --color-noche: #120a0c;
+  --color-tinta: #24201d;
+  --color-oro: #ac8958;
+  --color-oro-claro: #c4a273;
+  --color-sepia: #846b53;
+  --color-sepia-oscuro: #5e5248;
+  --color-vinedo: #454c3f;
+  --color-rojo-etiqueta: #8e1f2a;
+
+  --font-serif: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+  --font-sans: var(--font-inter), "Inter", system-ui, sans-serif;
+
+  --ease-cine: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-suave: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --breakpoint-xs: 26rem;
+}
+
+:root {
+  --gutter: clamp(1.25rem, 4vw, 3.5rem);
+  --header-h: 4.5rem;
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--color-pergamino);
+  color: var(--color-tinta);
+  font-family: var(--font-sans);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-borgona);
+  color: var(--color-pergamino);
+}
+
+/* Foco visible y coherente en toda la web (WCAG 2.4.7 / 2.4.11) */
+:focus-visible {
+  outline: 2px solid var(--color-oro);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+@layer components {
+  .eyebrow {
+    font-family: var(--font-sans);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+  }
+  .display {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    line-height: 1.02;
+    letter-spacing: -0.01em;
+  }
+  .wordmark {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+  .rule {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, currentColor 18%, currentColor 82%, transparent);
+    opacity: 0.45;
+  }
+  .container-editorial {
+    width: 100%;
+    max-width: 90rem;
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+  .link-underline {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 0.6s var(--ease-cine);
+  }
+  .link-underline:hover,
+  .link-underline:focus-visible {
+    background-size: 100% 1px;
+  }
+}
+
+/* Grano de papel muy sutil (SVG inline, sin peticiones) */
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.07;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.35  0 0 0 0 0.27  0 0 0 0 0.2  0 0 0 0.9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* Recorte de bandas del grabado: banda vertical ∩ fundido lateral */
+.band-mask {
+  -webkit-mask-image: var(--band), linear-gradient(90deg, transparent 1.5%, #000 7%, #000 93%, transparent 98.5%);
+  mask-image: var(--band), linear-gradient(90deg, transparent 1.5%, #000 7%, #000 93%, transparent 98.5%);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+}
+
+@keyframes scrollcue {
+  0% {
+    transform: translateY(-110%);
+  }
+  100% {
+    transform: translateY(220%);
+  }
+}
+
+.sr-only-focusable:not(:focus):not(:focus-within) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

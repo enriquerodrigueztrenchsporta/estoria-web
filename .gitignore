@@ -1,0 +1,9 @@
+node_modules/
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+.env*.local
+.env
+# Originales de imprenta y fotografías fuente: no se publican en el repositorio.
+source-assets/
