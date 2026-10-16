@@ -10,7 +10,7 @@ import { riojaPhotos } from "@/content/site";
 import { asset } from "@/lib/asset";
 import { containSize, maxScale } from "@/lib/camera";
 import { usePrefersReducedMotion, useViewport } from "@/lib/hooks";
-import { ENTRY_SCALE, JOURNEY_SECONDS, SCENES, cueAt, narration, T, buildCameraStops, captionOpacity, sceneAt, shotAt } from "@/lib/timeline";
+import { ENTRY_SCALE, JOURNEY_SECONDS, SCENES, music, T, buildCameraStops, captionOpacity, sceneAt, shotAt } from "@/lib/timeline";
 import { StaticJourney } from "./StaticJourney";
 
 const label = media.tempranilloLabel;
@@ -46,15 +46,14 @@ function Journey() {
   const p = useMotionValue(0);
   const [status, setStatus] = useState<"idle" | "playing" | "paused" | "ended">("idle");
   const playback = useRef<AnimationPlaybackControls | null>(null);
-  // Música y voz: con sonido, el audio marca el tiempo (así la voz nunca se desincroniza de la imagen)
+  // Música: con sonido, el audio marca el tiempo, así música e imagen terminan a la vez
   const [sound, setSound] = useState(true);
-  const [subtitles, setSubtitles] = useState(false);
   const audio = useRef<HTMLAudioElement | null>(null);
   const raf = useRef(0);
 
   const getAudio = () => {
     if (!audio.current) {
-      audio.current = new Audio(asset(narration.audio));
+      audio.current = new Audio(asset(music.audio));
       audio.current.preload = "auto";
     }
     return audio.current;
@@ -125,12 +124,6 @@ function Journey() {
   };
   useEffect(() => stop, [stop]);
 
-  // Subtítulo de la voz en el instante actual
-  const [cue, setCue] = useState<string | null>(null);
-  useMotionValueEvent(p, "change", (v) => {
-    const c = cueAt(v * JOURNEY_SECONDS);
-    if (c !== cue) setCue(c);
-  });
 
   // Si el visitante sigue bajando por la página, el recorrido se pausa
   useEffect(() => {
@@ -473,14 +466,6 @@ function Journey() {
         </motion.div>
 
         {/* ── Controles del recorrido ────────────── */}
-        {active && status !== "ended" && subtitles && cue && (
-          <p
-            aria-hidden
-            className="absolute inset-x-[var(--gutter)] bottom-[calc(max(1rem,2.5svh)+3.5rem)] z-20 mx-auto max-w-2xl text-center text-[15px] leading-snug text-pergamino md:text-lg"
-          >
-            <span className="box-decoration-clone rounded bg-noche/70 px-2 py-0.5">{cue}</span>
-          </p>
-        )}
         {active && status !== "ended" && (
           <div className="absolute bottom-[max(1rem,2.5svh)] left-1/2 z-20 flex -translate-x-1/2 items-center gap-4 whitespace-nowrap rounded-full bg-noche/55 px-4 py-2.5 text-pergamino backdrop-blur-sm md:gap-6 md:px-5">
             <button type="button" onClick={() => (status === "playing" ? pause() : play())} className="eyebrow opacity-80 hover:opacity-100">
@@ -498,16 +483,6 @@ function Journey() {
               className="opacity-80 hover:opacity-100"
             >
               <SpeakerIcon muted={!sound} />
-            </button>
-            <button
-              type="button"
-              onClick={() => setSubtitles((s) => !s)}
-              aria-pressed={subtitles}
-              aria-label={story.hero.subtitles}
-              title={story.hero.subtitles}
-              className={`rounded-sm border px-1 text-[10px] font-semibold leading-4 tracking-wide ${subtitles ? "border-pergamino bg-pergamino text-noche" : "border-pergamino/70 opacity-80 hover:opacity-100"}`}
-            >
-              CC
             </button>
             <span aria-hidden className="relative hidden h-px w-28 bg-current/25 sm:block">
               <motion.span className="absolute inset-y-0 left-0 bg-current" style={{ width: progressWidth }} />

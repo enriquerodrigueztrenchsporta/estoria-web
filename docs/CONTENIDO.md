@@ -85,14 +85,13 @@ Requisitos de cada foto:
   - declararla en la política de cookies;
   - subir `CONSENT_VERSION` en `src/lib/consent.ts` para volver a pedir el consentimiento.
 
-## 7. Voz y música del recorrido
+## 7. Música del recorrido
 
-- Guion: `src/content/narration.json` (`text` para subtítulos, `say` para la voz, `window` = escena en la que suena).
-- Generar: `npm run narration -- --modelo <es_ES-sharvard-medium.onnx> --musica <Gymnopedie_No._1..ogg>` (requiere `pip install piper-tts imageio-ffmpeg`).
-  Escribe `public/media/audio/historia.mp3` y `src/content/narration.generated.json`; la duración del recorrido se ajusta sola.
-- Para una locución profesional: grabar cada frase por separado y sustituir la síntesis en el script, o entregar un MP3 final
-  respetando los tiempos de `narration.generated.json`.
-- Créditos de música y voz: `audioCredits` en `src/content/credits.ts` (se muestran en /creditos/).
+- Generar: `npm run music -- --musica <Gymnopedie_No._1..ogg> [--segundos 20]` (requiere `pip install imageio-ffmpeg`).
+  Escribe `public/media/audio/historia.mp3` y `src/content/soundtrack.json`; la duración del recorrido es la de la música.
+- La voz narrada se retiró a petición de la marca (la voz sintética no sonaba natural). Si en el futuro se graba una
+  locución profesional, puede mezclarse en la misma pista.
+- Crédito: `audioCredits` en `src/content/credits.ts` (se muestra en /creditos/).
 
 ## 8. Formulario
 

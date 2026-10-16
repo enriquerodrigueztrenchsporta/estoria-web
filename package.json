@@ -13,7 +13,7 @@
     "assets": "python scripts/prepare_assets.py",
     "photos": "python scripts/prepare_photos.py",
     "turntable": "python scripts/prepare_turntable.py",
-    "narration": "python scripts/prepare_narration.py",
+    "music": "python scripts/prepare_music.py",
     "viura-label": "python scripts/prepare_viura_label.py"
   },
   "dependencies": {

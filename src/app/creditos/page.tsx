@@ -13,8 +13,8 @@ export default function Creditos() {
   return (
     <LegalPage title="Créditos" updated="16 de octubre de 2026">
       <p>
-        La etiqueta, la fotografía de la botella y la identidad de ESTORIA pertenecen a su titular. Las siguientes fotografías,
-        la música y la voz son obra de terceros y se publican conforme a sus licencias libres. Las fotografías proceden de
+        La etiqueta, la fotografía de la botella y la identidad de ESTORIA pertenecen a su titular. Las siguientes fotografías
+        y la música son obra de terceros y se publican conforme a sus licencias libres. Las fotografías proceden de
         Wikimedia Commons. Las licencias
         Creative Commons BY-SA permiten el uso, incluso comercial, citando autor y licencia; las adaptaciones se comparten con
         la misma licencia.
@@ -43,7 +43,7 @@ export default function Creditos() {
         ))}
       </ul>
 
-      <h2>Música y voz del recorrido</h2>
+      <h2>Música del recorrido</h2>
       <ul className="!list-none !pl-0">
         {audioCredits.map((c) => (
           <li key={c.id} className="border-b border-tinta/15 py-6 text-sm">

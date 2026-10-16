@@ -4,7 +4,7 @@ Universo digital de **ESTORIA**, vino de la Denominación de Origen Calificada R
 
 | Página | Contenido |
 |---|---|
-| `/` La historia | Recorrido cinematográfico con música y voz narrada que solo se reproduce si el visitante pulsa «Ver la historia» (la botella → el grabado → Rioja → regreso), con sonido y subtítulos opcionales, seguido de la presentación de la marca |
+| `/` La historia | Recorrido cinematográfico de 20 s con música que solo se reproduce si el visitante pulsa «Ver la historia» (la botella → el grabado → Rioja → regreso), con el sonido opcional, seguido de la presentación de la marca |
 | `/vinos/` | Tempranillo y Viura (etiqueta de cada vino) con vista 360° fotográfica preparada para cuando existan las fotos, y ficha de cada vino |
 | `/rioja/` | El grabado de la etiqueta con el lema, la tradición vinícola de Rioja, las uvas de ESTORIA (Tempranillo y Viura) y paisajes de la DOCa |
 | `/mesa/` | Momentos para el vino y dos maridajes: el tinto con un cocido y el blanco con un pescado |
@@ -71,14 +71,14 @@ scripts/prepare_assets.py   genera public/media desde source-assets/ (sin retoca
 scripts/prepare_photos.py   descarga y optimiza las fotos con licencia libre
 scripts/prepare_turntable.py convierte las fotos de la base giratoria en la vista 360° (npm run turntable -- <vino>)
 scripts/prepare_viura_label.py etiqueta del Viura a partir de la del Tempranillo (npm run viura-label)
-scripts/prepare_narration.py  voz sintética + música del recorrido (npm run narration)
+scripts/prepare_music.py      música del recorrido (npm run music)
 tests/            cámara y continuidad, contenido, licencias de fotos, páginas, formularios
 docs/             dirección creativa, storyboard y guía de contenido
 ```
 
-## Fotografías, música y voz de terceros
+## Fotografías y música de terceros
 
-Fotos, música (Satie, Gymnopédie n.º 1, CC0) y voz (Piper, modelo «sharvard», CC BY 3.0) se acreditan en `/creditos/`.
+Fotos y música (Satie, Gymnopédie n.º 1, CC0) se acreditan en `/creditos/`.
 Las fotos proceden de Wikimedia Commons, con la licencia libre verificada archivo a archivo:
 
 - licencia declarada;

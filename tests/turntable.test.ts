@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync } from "node:fs";
 import path from "node:path";
 import { story } from "@/content/copy";
 import type { Turntable } from "@/content/types";
 import { wines } from "@/content/wines";
-import { JOURNEY_SECONDS, cueAt, narration } from "@/lib/timeline";
+import { JOURNEY_SECONDS, music } from "@/lib/timeline";
 import { clampRow, frameAt, framePath, loadOrder } from "@/lib/turntable";
 
 const t: Turntable = { dir: "/media/giro/prueba", frames: 36, rows: 3, frontRow: 1, width: 800, height: 1600 };
@@ -48,17 +48,9 @@ describe("recorrido de inicio", () => {
     expect(story.hero.playHint(JOURNEY_SECONDS)).toContain(String(JOURNEY_SECONDS));
   });
 
-  it("cada frase de la voz suena dentro de su escena y el audio existe", () => {
-    const script = JSON.parse(readFileSync(path.resolve(__dirname, "../src/content/narration.json"), "utf-8")) as { lines: { window: [number, number]; text: string }[] };
-    expect(narration.cues).toHaveLength(script.lines.length);
-    narration.cues.forEach((cue, i) => {
-      const [a, b] = script.lines[i]!.window;
-      expect(cue.text).toBe(script.lines[i]!.text);
-      expect(cue.start).toBeGreaterThanOrEqual(a * JOURNEY_SECONDS);
-      expect(cue.end).toBeLessThanOrEqual(b * JOURNEY_SECONDS);
-    });
-    expect(existsSync(path.resolve(__dirname, "../public", narration.audio.replace(/^\//, "")))).toBe(true);
-    expect(cueAt(narration.cues[0]!.start + 0.1)).toBe(narration.cues[0]!.text);
-    expect(cueAt(0)).toBeNull();
+  it("la música existe y dura lo mismo que el recorrido", () => {
+    expect(JOURNEY_SECONDS).toBeGreaterThanOrEqual(15);
+    expect(JOURNEY_SECONDS).toBeLessThanOrEqual(30);
+    expect(existsSync(path.resolve(__dirname, "../public", music.audio.replace(/^\//, "")))).toBe(true);
   });
 });

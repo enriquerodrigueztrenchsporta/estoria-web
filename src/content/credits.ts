@@ -170,26 +170,16 @@ export const allPhotos: Photo[] = Object.values(photos);
 /** Texto de atribución corto para pie de foto. */
 export const attribution = (p: Photo) => `Foto: ${p.author} · ${p.license}`;
 
-/** Música y voz del recorrido «Ver la historia» (audio generado con scripts/prepare_narration.py). */
+/** Música del recorrido «Ver la historia» (audio generado con scripts/prepare_music.py). */
 export const audioCredits = [
   {
     id: "musica",
     what: "Música: Erik Satie, Gymnopédie n.º 1 (1888)",
-    detail: "Interpretación al piano de Teknopazzo. Obra y grabación en dominio público / CC0.",
+    detail: "Interpretación al piano de Teknopazzo. Obra en dominio público; grabación cedida con CC0.",
     license: "CC0 1.0",
     licenseUrl: CC0,
     sourceUrl: commons("Gymnopedie No. 1..ogg"),
     sourceLabel: "Original en Wikimedia Commons",
-    changes: "Fragmento de los primeros segundos, con fundidos, volumen reducido bajo la voz y conversión a MP3.",
-  },
-  {
-    id: "voz",
-    what: "Voz: síntesis de voz con Piper TTS, modelo es_ES «sharvard» (voz femenina)",
-    detail: "Modelo entrenado con el Sharvard corpus (Universidad de Edimburgo; Aubanel, García Lecumberri y Cooke, 2014).",
-    license: "CC BY 3.0",
-    licenseUrl: "https://creativecommons.org/licenses/by/3.0/deed.es",
-    sourceUrl: "https://huggingface.co/rhasspy/piper-voices/tree/main/es/es_ES/sharvard/medium",
-    sourceLabel: "Modelo de voz",
-    changes: "Texto propio de ESTORIA leído por la voz sintética y mezclado con la música.",
+    changes: "Fragmento de los primeros 20 segundos, con fundidos, volumen normalizado y conversión a MP3.",
   },
 ] as const;
