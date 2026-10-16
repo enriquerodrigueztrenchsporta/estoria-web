@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { site } from "@/content/site";
+import { contact, site } from "@/content/site";
 import { CookieSettingsButton } from "@/components/legal/CookieSettingsButton";
 
 export function Footer() {
@@ -25,6 +25,21 @@ export function Footer() {
           <div className="text-sm leading-relaxed text-pergamino/70 md:col-span-2">
             <p className="eyebrow text-oro-claro">DOCa Rioja</p>
             <p className="mt-3">Tempranillo · Viura</p>
+            <p className="eyebrow mt-8 text-oro-claro">Contacto</p>
+            <ul className="mt-3 space-y-1">
+              <li>
+                <a href={`mailto:${contact.email}`} className="hover:text-pergamino">
+                  {contact.email}
+                </a>
+              </li>
+              {contact.phones.map((p) => (
+                <li key={p.tel}>
+                  <a href={`tel:${p.tel}`} className="hover:text-pergamino">
+                    {p.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
 

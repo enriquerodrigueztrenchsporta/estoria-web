@@ -3,9 +3,10 @@
 Todo el contenido vive en `src/content/`. Ningún componente contiene datos del vino ni del titular.
 Regla: **un dato no confirmado nunca se publica**. Los campos `pending()` no se muestran (o, en los textos legales, se muestran como «Pendiente»). Los tests lo verifican.
 
-## 1. Datos del titular (obligatorio antes del lanzamiento)
+## 1. Datos del titular y contacto
 
-`owner` en `src/content/site.ts`: razón social, NIF, domicilio, correo, teléfono y datos registrales, con `confirmed("…")`.
+`owner` en `src/content/site.ts`: razón social, NIF, domicilio y datos registrales, con `confirmed("…")` (obligatorio antes del lanzamiento).
+Correo (info@estoria.com) y teléfonos ya confirmados por la marca: `owner` y `contact` en el mismo archivo.
 Se rellenan solos en el aviso legal, la política de privacidad y la página de contacto.
 
 ## 2. Ficha técnica de un vino
@@ -22,11 +23,12 @@ technical: {
 
 Importar `confirmed` desde `./types`. Los datos aparecen automáticamente en la ficha (diálogo «Ver ficha del vino»).
 
-## 3. Etiqueta definitiva del Viura
+## 3. Etiqueta del Viura
 
-1. Exportar la etiqueta a la máxima resolución disponible en `public/media/etiqueta-viura.webp` (con transparencia fuera del papel).
-2. En `src/content/media.ts`, añadir el recurso con `width`, `height` y `alt`.
-3. En `wines.ts` (Viura): `label: media.viuraLabel` y `labelStatus: "definitiva"`.
+A petición de la marca, la etiqueta del Viura es la del Tempranillo con «VIURA» en lugar de «TEMPRANILLO»
+(`npm run viura-label`, ver el script para el método). Solo cambia esa palabra; la tipografía es Cinzel (licencia OFL),
+la más parecida a la original. Si el diseñador entrega el archivo de imprenta del Viura, sustituir
+`public/media/etiqueta-viura.webp` (mismo tamaño, 1122 × 1402) por una exportación de ese archivo.
 
 ## 4. Vista 360° de las botellas (fotografía real)
 
@@ -65,7 +67,7 @@ Dónde se usa cada foto:
 | Recorrido de inicio | `riojaPhotos` | `site.ts` |
 | Página Rioja | `riojaGallery` | `editorial.ts` |
 | Textos de todas las páginas | `story` | `copy.ts` |
-| La mesa | `tablePhotos` | `editorial.ts` |
+| La mesa | `tablePhotos` (portada, maridajes tinto/blanco, ocasiones, pequeños momentos) | `editorial.ts` |
 
 Requisitos de cada foto:
 
@@ -83,12 +85,21 @@ Requisitos de cada foto:
   - declararla en la política de cookies;
   - subir `CONSENT_VERSION` en `src/lib/consent.ts` para volver a pedir el consentimiento.
 
-## 7. Formulario
+## 7. Voz y música del recorrido
+
+- Guion: `src/content/narration.json` (`text` para subtítulos, `say` para la voz, `window` = escena en la que suena).
+- Generar: `npm run narration -- --modelo <es_ES-sharvard-medium.onnx> --musica <Gymnopedie_No._1..ogg>` (requiere `pip install piper-tts imageio-ffmpeg`).
+  Escribe `public/media/audio/historia.mp3` y `src/content/narration.generated.json`; la duración del recorrido se ajusta sola.
+- Para una locución profesional: grabar cada frase por separado y sustituir la síntesis en el script, o entregar un MP3 final
+  respetando los tiempos de `narration.generated.json`.
+- Créditos de música y voz: `audioCredits` en `src/content/credits.ts` (se muestran en /creditos/).
+
+## 8. Formulario
 
 Configurar `NEXT_PUBLIC_FORM_ENDPOINT` (en GitHub, la variable `FORM_ENDPOINT`) y declarar el proveedor en `formProcessor` (`site.ts`). Ese proveedor aparece en la política de privacidad como encargado del tratamiento.
 
 El formulario envía un `POST` JSON con `name, company, email, phone, topic, message, privacy, source`. Es compatible con Formspree, Basin, Getform o una función propia. Solo se muestra «recibido» si el servidor responde 2xx.
 
-## 8. Venta directa (futuro)
+## 9. Venta directa (futuro)
 
 Cada vino tiene `commerce` (`sku`, `price`, `available`) como `pending`. La tienda no está implementada a propósito: requiere condiciones comerciales, pasarela de pago, verificación de la mayoría de edad en la compra y política de envíos.

@@ -30,11 +30,10 @@ describe("credibilidad del contenido", () => {
     }
   });
 
-  it("solo el Tempranillo usa la etiqueta original; el Viura queda como provisional", () => {
-    expect(wines.find((w) => w.slug === "tempranillo")?.labelStatus).toBe("definitiva");
-    const viura = wines.find((w) => w.slug === "viura");
-    expect(viura?.labelStatus).toBe("en-desarrollo");
-    expect(viura?.label).toBeNull();
+  it("el Viura usa la etiqueta del Tempranillo con su variedad; ninguno usa la etiqueta provisional", () => {
+    expect(wines.find((w) => w.slug === "tempranillo")?.label).toBe(media.tempranilloLabel);
+    expect(wines.find((w) => w.slug === "viura")?.label).toBe(media.viuraLabel);
+    for (const w of wines) expect(w.labelStatus).toBe("definitiva");
   });
 
   it("todos los recursos propios existen", () => {

@@ -25,7 +25,8 @@ export default function Cookies() {
         el propio sitio, sin conexiones a servicios externos. Únicamente se usa almacenamiento técnico, imprescindible para
         prestar el servicio que solicitas y exento de consentimiento:
       </p>
-      <table>
+      <div className="-mx-[var(--gutter)] overflow-x-auto px-[var(--gutter)] md:mx-0 md:px-0">
+      <table className="min-w-[34rem]">
         <thead>
           <tr>
             <th>Nombre</th>
@@ -53,6 +54,7 @@ export default function Cookies() {
           </tr>
         </tbody>
       </table>
+      </div>
       <p>
         Si en el futuro se incorporan cookies de análisis u otras no necesarias, se actualizará esta política, se volverá a
         solicitar tu consentimiento y solo se activarán si lo aceptas.

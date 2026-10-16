@@ -1,5 +1,5 @@
 import { photos, type Photo } from "./credits";
-import { pending, type Field } from "./types";
+import { confirmed, pending, type Field } from "./types";
 
 export const site = {
   name: "ESTORIA",
@@ -19,7 +19,7 @@ export const site = {
     { href: "/aviso-legal/", label: "Aviso legal" },
     { href: "/privacidad/", label: "Privacidad" },
     { href: "/cookies/", label: "Cookies" },
-    { href: "/creditos/", label: "Créditos fotográficos" },
+    { href: "/creditos/", label: "Créditos" },
   ],
 };
 
@@ -38,9 +38,18 @@ export const owner: {
   company: pending("Razón social o nombre del titular"),
   taxId: pending("NIF / CIF"),
   address: pending("Domicilio"),
-  email: pending("Correo electrónico de contacto"),
-  phone: pending("Teléfono"),
+  email: confirmed("info@estoria.com"),
+  phone: confirmed("655 196 135 · 680 810 808"),
   registry: pending("Datos de inscripción en el Registro Mercantil, si procede"),
+};
+
+/** Datos de contacto públicos (facilitados por la marca el 16/10/2026). */
+export const contact = {
+  email: "info@estoria.com",
+  phones: [
+    { label: "655 196 135", tel: "+34655196135" },
+    { label: "680 810 808", tel: "+34680810808" },
+  ],
 };
 
 /** Proveedor que recibirá los formularios (encargado del tratamiento). Pendiente de elegir. */

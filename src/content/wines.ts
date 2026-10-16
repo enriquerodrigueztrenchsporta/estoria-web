@@ -44,8 +44,9 @@ export const wines: Wine[] = [
     appellation: "DOCa Rioja",
     theme: { background: "#FAF7F0", ink: "#24201D", muted: "#5E5248", accent: "#8E6F45", light: "#E9D6A8", mode: "light" },
     bottle: null,
-    label: null,
-    labelStatus: "en-desarrollo",
+    // Adaptación digital de la etiqueta del Tempranillo pedida por la marca (scripts/prepare_viura_label.py)
+    label: media.viuraLabel,
+    labelStatus: "definitiva",
     turntable: turntables.viura ?? null,
     description: "Vino blanco de la Denominación de Origen Calificada Rioja, elaborado con Viura.",
     technical: emptySheet(),

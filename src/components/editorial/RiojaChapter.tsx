@@ -126,11 +126,11 @@ export function RiojaChapter() {
             {copy.grapes.items.map((g, i) => (
               <motion.article
                 key={g.name}
-                className={`px-8 py-12 md:px-12 md:py-16 ${i === 0 ? "bg-vino text-pergamino" : "bg-marfil text-tinta"}`}
+                className={`px-6 py-10 md:px-12 md:py-16 ${i === 0 ? "bg-vino text-pergamino" : "bg-marfil text-tinta"}`}
                 {...reveal(0.12 * i)}
               >
                 <p className={`eyebrow ${i === 0 ? "text-oro-claro" : "text-sepia-oscuro"}`}>{g.kind}</p>
-                <h3 className="display mt-4 text-[clamp(2.5rem,5vw,4rem)] uppercase tracking-[0.04em]">{g.name}</h3>
+                <h3 className="display mt-4 text-[clamp(1.9rem,8vw,4rem)] uppercase tracking-[0.04em] md:text-[clamp(2.5rem,5vw,4rem)]">{g.name}</h3>
                 <p className={`mt-6 max-w-[44ch] text-lg leading-relaxed ${i === 0 ? "text-pergamino/80" : "text-sepia-oscuro"}`}>{g.text}</p>
               </motion.article>
             ))}

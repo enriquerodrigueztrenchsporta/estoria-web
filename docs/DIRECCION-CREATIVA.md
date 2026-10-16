@@ -45,6 +45,15 @@ Decisiones técnicas:
 - La botella 3D se retira por poco realista. `/vinos/` usa solo fotografía real: vista 360° a partir de fotos sobre base giratoria (`TurntableViewer`), o la foto disponible mientras no existan.
 - `/rioja/` incorpora la tradición vinícola de la Denominación y las dos variedades; `/mesa/`, cuatro momentos de consumo.
 
+## Cambios v4 (16/10/2026)
+
+- El recorrido lleva música (Satie, Gymnopédie n.º 1) y una voz femenina que explica cada imagen. Con sonido, el reloj del
+  recorrido es el propio audio, así que voz e imagen no se desincronizan. Duración: la del audio (`narration.generated.json`).
+  Botones de pausa, saltar, sonido y subtítulos. Si el navegador bloquea el audio, el recorrido sigue en silencio.
+- La mesa: portada con copa de tinto, sección «Dos vinos, dos mesas» (tinto con cocido, blanco con pescado) y momentos.
+- Viura con la etiqueta del Tempranillo cambiando solo la variedad.
+- Revisión móvil: títulos que se salían a 360–390 px y tabla de cookies con desplazamiento horizontal.
+
 ## Sistema visual
 
 - **Color:** tokens en `src/app/globals.css` (`@theme`): pergamino, papel, marfil, borgoña, vino, noche, tinta, oro, sepia, viñedo y rojo etiqueta.

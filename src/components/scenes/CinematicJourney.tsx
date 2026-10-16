@@ -10,7 +10,7 @@ import { riojaPhotos } from "@/content/site";
 import { asset } from "@/lib/asset";
 import { containSize, maxScale } from "@/lib/camera";
 import { usePrefersReducedMotion, useViewport } from "@/lib/hooks";
-import { ENTRY_SCALE, JOURNEY_SECONDS, SCENES, T, buildCameraStops, captionOpacity, sceneAt, shotAt } from "@/lib/timeline";
+import { ENTRY_SCALE, JOURNEY_SECONDS, SCENES, cueAt, narration, T, buildCameraStops, captionOpacity, sceneAt, shotAt } from "@/lib/timeline";
 import { StaticJourney } from "./StaticJourney";
 
 const label = media.tempranilloLabel;
@@ -46,24 +46,68 @@ function Journey() {
   const p = useMotionValue(0);
   const [status, setStatus] = useState<"idle" | "playing" | "paused" | "ended">("idle");
   const playback = useRef<AnimationPlaybackControls | null>(null);
+  // Música y voz: con sonido, el audio marca el tiempo (así la voz nunca se desincroniza de la imagen)
+  const [sound, setSound] = useState(true);
+  const [subtitles, setSubtitles] = useState(false);
+  const audio = useRef<HTMLAudioElement | null>(null);
+  const raf = useRef(0);
+
+  const getAudio = () => {
+    if (!audio.current) {
+      audio.current = new Audio(asset(narration.audio));
+      audio.current.preload = "auto";
+    }
+    return audio.current;
+  };
 
   const stop = useCallback(() => {
     playback.current?.stop();
     playback.current = null;
+    cancelAnimationFrame(raf.current);
+    audio.current?.pause();
   }, []);
-  const play = useCallback(
-    (from?: number) => {
-      stop();
-      const start = from ?? (p.get() >= 1 ? 0 : p.get());
-      p.set(start);
-      setStatus("playing");
+
+  const runSilent = useCallback(
+    (start: number) => {
       playback.current = animate(p, 1, {
         duration: JOURNEY_SECONDS * (1 - start),
         ease: "linear",
         onComplete: () => setStatus("ended"),
       });
     },
-    [p, stop],
+    [p],
+  );
+
+  const play = useCallback(
+    (from?: number, withSound = sound) => {
+      stop();
+      const start = from ?? (p.get() >= 1 ? 0 : p.get());
+      p.set(start);
+      setStatus("playing");
+      if (!withSound) return runSilent(start);
+      const a = getAudio();
+      a.currentTime = start * JOURNEY_SECONDS;
+      const follow = () => {
+        p.set(Math.min(1, a.currentTime / JOURNEY_SECONDS));
+        if (a.ended) {
+          p.set(1);
+          setStatus("ended");
+          return;
+        }
+        if (!a.paused) raf.current = requestAnimationFrame(follow);
+      };
+      a.play()
+        .then(() => {
+          raf.current = requestAnimationFrame(follow);
+        })
+        .catch(() => {
+          // El navegador ha bloqueado el audio: el recorrido sigue sin sonido
+          setSound(false);
+          runSilent(start);
+        });
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [p, stop, runSilent, sound],
   );
   const pause = useCallback(() => {
     stop();
@@ -74,7 +118,19 @@ function Journey() {
     p.set(1);
     setStatus("ended");
   };
+  const toggleSound = () => {
+    const next = !sound;
+    setSound(next);
+    if (status === "playing") play(p.get(), next);
+  };
   useEffect(() => stop, [stop]);
+
+  // Subtítulo de la voz en el instante actual
+  const [cue, setCue] = useState<string | null>(null);
+  useMotionValueEvent(p, "change", (v) => {
+    const c = cueAt(v * JOURNEY_SECONDS);
+    if (c !== cue) setCue(c);
+  });
 
   // Si el visitante sigue bajando por la página, el recorrido se pausa
   useEffect(() => {
@@ -197,7 +253,14 @@ function Journey() {
 
   return (
     <section ref={sectionRef} data-tone={tone} aria-label="La historia de ESTORIA" className="relative">
-      <div className="relative h-svh w-full overflow-hidden">
+      {/* El escenario nunca se desplaza: el foco del teclado o un scrollIntoView no deben moverlo */}
+      <div
+        className="relative h-svh w-full overflow-hidden"
+        onScroll={(e) => {
+          e.currentTarget.scrollTop = 0;
+          e.currentTarget.scrollLeft = 0;
+        }}
+      >
         <motion.div aria-hidden className="absolute inset-0" style={{ backgroundColor: background }} />
 
         {/* ── Botella ───────────────────────────── */}
@@ -340,7 +403,7 @@ function Journey() {
                 <span className="eyebrow">{story.hero.play}</span>
               </button>
               <p className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-pergamino/65">
-                <span>{story.hero.playHint}</span>
+                <span>{story.hero.playHint(JOURNEY_SECONDS)}</span>
                 <span aria-hidden>·</span>
                 <a href="#la-marca" className="link-underline text-pergamino/85">
                   {story.hero.more} ↓
@@ -410,17 +473,43 @@ function Journey() {
         </motion.div>
 
         {/* ── Controles del recorrido ────────────── */}
-        {active && status !== "ended" && (
-          <div
-            className="absolute bottom-[max(1rem,2.5svh)] left-1/2 z-20 flex -translate-x-1/2 items-center gap-6 whitespace-nowrap rounded-full bg-noche/55 px-5 py-2.5 text-pergamino backdrop-blur-sm"
+        {active && status !== "ended" && subtitles && cue && (
+          <p
+            aria-hidden
+            className="absolute inset-x-[var(--gutter)] bottom-[calc(max(1rem,2.5svh)+3.5rem)] z-20 mx-auto max-w-2xl text-center text-[15px] leading-snug text-pergamino md:text-lg"
           >
+            <span className="box-decoration-clone rounded bg-noche/70 px-2 py-0.5">{cue}</span>
+          </p>
+        )}
+        {active && status !== "ended" && (
+          <div className="absolute bottom-[max(1rem,2.5svh)] left-1/2 z-20 flex -translate-x-1/2 items-center gap-4 whitespace-nowrap rounded-full bg-noche/55 px-4 py-2.5 text-pergamino backdrop-blur-sm md:gap-6 md:px-5">
             <button type="button" onClick={() => (status === "playing" ? pause() : play())} className="eyebrow opacity-80 hover:opacity-100">
               {status === "playing" ? `❚❚ ${story.hero.pause}` : `▶ ${story.hero.resume}`}
             </button>
             <button type="button" onClick={skip} className="eyebrow opacity-80 hover:opacity-100">
               {story.hero.skip} →
             </button>
-            <span aria-hidden className="relative hidden h-px w-32 bg-current/25 sm:block">
+            <button
+              type="button"
+              onClick={toggleSound}
+              aria-pressed={sound}
+              aria-label={story.hero.sound}
+              title={story.hero.sound}
+              className="opacity-80 hover:opacity-100"
+            >
+              <SpeakerIcon muted={!sound} />
+            </button>
+            <button
+              type="button"
+              onClick={() => setSubtitles((s) => !s)}
+              aria-pressed={subtitles}
+              aria-label={story.hero.subtitles}
+              title={story.hero.subtitles}
+              className={`rounded-sm border px-1 text-[10px] font-semibold leading-4 tracking-wide ${subtitles ? "border-pergamino bg-pergamino text-noche" : "border-pergamino/70 opacity-80 hover:opacity-100"}`}
+            >
+              CC
+            </button>
+            <span aria-hidden className="relative hidden h-px w-28 bg-current/25 sm:block">
               <motion.span className="absolute inset-y-0 left-0 bg-current" style={{ width: progressWidth }} />
             </span>
           </div>
@@ -481,5 +570,21 @@ function RiojaPhoto({ photo, p, index }: { photo: Photo; p: MotionValue<number>;
         style={{ scale }}
       />
     </motion.div>
+  );
+}
+
+function SpeakerIcon({ muted }: { muted: boolean }) {
+  return (
+    <svg aria-hidden viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor" stroke="none" />
+      {muted ? (
+        <path d="M16 9.5l5 5M21 9.5l-5 5" />
+      ) : (
+        <>
+          <path d="M15.5 9a4.2 4.2 0 0 1 0 6" />
+          <path d="M18.2 6.5a8 8 0 0 1 0 11" />
+        </>
+      )}
+    </svg>
   );
 }

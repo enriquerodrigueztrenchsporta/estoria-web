@@ -5,7 +5,9 @@ export const story = {
     title: "ESTORIA",
     tagline: "Hay historias que merecen ser compartidas.",
     play: "Ver la historia",
-    playHint: "Un recorrido de 20 segundos",
+    playHint: (seconds: number) => `Con música y voz · ${seconds} segundos`,
+    sound: "Sonido",
+    subtitles: "Subtítulos",
     pause: "Pausar",
     resume: "Continuar",
     skip: "Saltar",
@@ -87,14 +89,27 @@ export const story = {
         text: "Hay fechas que se recuerdan durante años: una celebración familiar, un aniversario, una buena noticia que merece un brindis. Momentos que se convierten en historia y que piden un vino a su altura.",
       },
       {
-        title: "Para disfrutar de una buena comida",
-        text: "La cocina de temporada, el producto bien tratado, los platos que se preparan con tiempo. Un buen vino acompaña, realza los sabores y convierte una comida en una sobremesa larga.",
-      },
-      {
         title: "Para los pequeños momentos",
         text: "No todas las historias son grandes. A veces basta una copa al final del día, una conversación tranquila o una tapa en buena compañía para que un momento cualquiera merezca la pena.",
       },
     ],
+    pairings: {
+      eyebrow: "Dos vinos, dos mesas",
+      title: "Para disfrutar de una buena comida.",
+      intro: "La cocina de siempre, el producto bien tratado, los platos que se preparan con tiempo. Un buen vino acompaña, realza los sabores y convierte una comida en una sobremesa larga.",
+      items: [
+        {
+          wine: "ESTORIA Tempranillo",
+          title: "El tinto, con un buen cocido.",
+          text: "Los platos de cuchara, los guisos a fuego lento y las comidas de invierno que reúnen a toda la familia alrededor de la mesa. La cocina de siempre pide un tinto de Rioja.",
+        },
+        {
+          wine: "ESTORIA Viura",
+          title: "El blanco, con un pescado.",
+          text: "Un pescado al horno o a la plancha, la cocina del mar y los platos más frescos y luminosos. Un blanco de Rioja para las comidas que se alargan con la luz del mediodía.",
+        },
+      ],
+    },
     closing: "Porque el vino, como las buenas historias, se disfruta más cuando se comparte.",
     moderation: "Disfruta del vino con calma y con moderación. Venta y consumo reservados a mayores de 18 años.",
   },

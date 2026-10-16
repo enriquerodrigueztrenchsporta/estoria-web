@@ -1,6 +1,7 @@
 /**
  * Fotografías de terceros con licencia libre verificada en Wikimedia Commons (16/10/2026).
  * Comprobado por archivo: licencia declarada, autor, obra propia o revisión de licencia superada,
+ * o (fotos de Unsplash anteriores a junio de 2017) copia archivada de su publicación original con CC0,
  * sin plantillas de derechos de imagen ni de marca, sin personas identificables ni marcas de vino de terceros.
  * Las licencias CC BY y CC BY-SA exigen citar autor y licencia: se hace junto a cada foto y en /creditos/.
  * Regenerar los archivos: `python scripts/prepare_photos.py`.
@@ -101,28 +102,52 @@ export const photos = {
     sourceUrl: commons("San Vicente de la Sonsierra (2020) 3.jpg"),
     changes: RESIZED,
   }),
-  mesaFlores: photo({
-    id: "mesa-flores",
-    file: "Legant table setting with white floral centerpiece.jpg",
+  cocido: photo({
+    id: "cocido",
+    file: "Cocido.jpg",
     width: 2400,
-    height: 1121,
-    alt: "Mesa vestida de blanco con cubertería, copas y un centro de flores blancas.",
-    author: "Bhullargraphic",
+    height: 1345,
+    alt: "Plato de cocido: garbanzos, patata, verdura, carne, pollo y chorizo.",
+    author: "Rubendene",
     license: "CC BY-SA 4.0",
     licenseUrl: BY_SA_4,
-    sourceUrl: commons("Legant table setting with white floral centerpiece.jpg"),
-    changes: "Recortada (se elimina la parte superior del fondo), redimensionada y convertida a WebP.",
+    sourceUrl: commons("Cocido.jpg"),
+    changes: RESIZED,
   }),
-  mesaVelas: photo({
-    id: "mesa-velas",
-    file: "Pixella15317 (24030634680).jpg",
+  mesaTinto: photo({
+    id: "mesa-tinto",
+    file: "Outdoor wine dinner (Unsplash).jpg",
     width: 2400,
-    height: 1600,
-    alt: "Detalle de una mesa preparada: platos blancos, cubiertos y velas encendidas.",
-    author: "Pixel.la Free Stock Photos",
+    height: 2728,
+    alt: "Una copa de vino tinto sobre una mesa de madera en una terraza al atardecer.",
+    author: "Serge Esteve",
     license: "CC0 1.0",
     licenseUrl: CC0,
-    sourceUrl: commons("Pixella15317 (24030634680).jpg"),
+    sourceUrl: commons("Outdoor wine dinner (Unsplash).jpg"),
+    changes: "Recortada (se elimina el borde derecho), redimensionada y convertida a WebP.",
+  }),
+  blancoPescado: photo({
+    id: "mesa-blanco-pescado",
+    file: "Gourmet meal and white wine (Unsplash).jpg",
+    width: 2400,
+    height: 1600,
+    alt: "Plato de pescado en una mesa compartida, con copas de vino blanco al fondo.",
+    author: "Jay Wennington",
+    license: "CC0 1.0",
+    licenseUrl: CC0,
+    sourceUrl: commons("Gourmet meal and white wine (Unsplash).jpg"),
+    changes: RESIZED,
+  }),
+  mesaDos: photo({
+    id: "mesa-dos",
+    file: "Vintage wine dinner for two (Unsplash).jpg",
+    width: 2400,
+    height: 1600,
+    alt: "Mesa de madera para dos con copas de vino blanco y tinto, dos platos y un ramo de flores silvestres.",
+    author: "Stefan Johnson",
+    license: "CC0 1.0",
+    licenseUrl: CC0,
+    sourceUrl: commons("Vintage wine dinner for two (Unsplash).jpg"),
     changes: RESIZED,
   }),
   pinchos: photo({
@@ -144,3 +169,27 @@ export const allPhotos: Photo[] = Object.values(photos);
 
 /** Texto de atribución corto para pie de foto. */
 export const attribution = (p: Photo) => `Foto: ${p.author} · ${p.license}`;
+
+/** Música y voz del recorrido «Ver la historia» (audio generado con scripts/prepare_narration.py). */
+export const audioCredits = [
+  {
+    id: "musica",
+    what: "Música: Erik Satie, Gymnopédie n.º 1 (1888)",
+    detail: "Interpretación al piano de Teknopazzo. Obra y grabación en dominio público / CC0.",
+    license: "CC0 1.0",
+    licenseUrl: CC0,
+    sourceUrl: commons("Gymnopedie No. 1..ogg"),
+    sourceLabel: "Original en Wikimedia Commons",
+    changes: "Fragmento de los primeros segundos, con fundidos, volumen reducido bajo la voz y conversión a MP3.",
+  },
+  {
+    id: "voz",
+    what: "Voz: síntesis de voz con Piper TTS, modelo es_ES «sharvard» (voz femenina)",
+    detail: "Modelo entrenado con el Sharvard corpus (Universidad de Edimburgo; Aubanel, García Lecumberri y Cooke, 2014).",
+    license: "CC BY 3.0",
+    licenseUrl: "https://creativecommons.org/licenses/by/3.0/deed.es",
+    sourceUrl: "https://huggingface.co/rhasspy/piper-voices/tree/main/es/es_ES/sharvard/medium",
+    sourceLabel: "Modelo de voz",
+    changes: "Texto propio de ESTORIA leído por la voz sintética y mezclado con la música.",
+  },
+] as const;

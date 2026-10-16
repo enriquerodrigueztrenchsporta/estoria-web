@@ -14,6 +14,18 @@ export const media = {
     height: 701,
     alt: "Etiqueta original de ESTORIA Tempranillo.",
   },
+  viuraLabel: {
+    src: "/media/etiqueta-viura.webp",
+    width: 1122,
+    height: 1402,
+    alt: "Etiqueta de ESTORIA Viura: RIOJA, Denominación de Origen Calificada, el nombre ESTORIA, el grabado de un pueblo con iglesia entre montañas y viñedos y la palabra VIURA.",
+  },
+  viuraLabelSmall: {
+    src: "/media/etiqueta-viura-sm.webp",
+    width: 561,
+    height: 701,
+    alt: "Etiqueta de ESTORIA Viura.",
+  },
   tempranilloBottle: {
     src: "/media/botella-tempranillo.webp",
     width: 921,

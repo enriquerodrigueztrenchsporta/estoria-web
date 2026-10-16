@@ -1,0 +1,36 @@
+{
+  "duration": 48,
+  "audio": "/media/audio/historia.mp3",
+  "cues": [
+    {
+      "start": 1.21,
+      "end": 7.9,
+      "text": "Esto es ESTORIA. Un vino de Rioja, nacido para acompañar las historias que merecen ser compartidas."
+    },
+    {
+      "start": 14.17,
+      "end": 22.1,
+      "text": "En su etiqueta hay un paisaje grabado: un pueblo en torno a su iglesia, las montañas y los viñedos. Así es la tierra de la que venimos."
+    },
+    {
+      "start": 27.13,
+      "end": 30.67,
+      "text": "Briones, en La Rioja. Pueblos que crecen entre viñas."
+    },
+    {
+      "start": 31.93,
+      "end": 35.61,
+      "text": "Elvillar, en Rioja Alavesa, donde la tierra guarda memoria."
+    },
+    {
+      "start": 36.73,
+      "end": 39.68,
+      "text": "Y donde cada historia encuentra su momento."
+    },
+    {
+      "start": 42.25,
+      "end": 45.83,
+      "text": "Tempranillo y Viura. El carácter de Rioja, en ESTORIA."
+    }
+  ]
+}

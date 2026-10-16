@@ -4,11 +4,11 @@ Universo digital de **ESTORIA**, vino de la Denominación de Origen Calificada R
 
 | Página | Contenido |
 |---|---|
-| `/` La historia | Recorrido cinematográfico de 20 s que solo se reproduce si el visitante pulsa «Ver la historia» (la botella → el grabado → Rioja → regreso), seguido de la presentación de la marca |
-| `/vinos/` | Tempranillo y Viura con vista 360° hecha con fotografías reales de la botella (cuando existan) y ficha de cada vino |
+| `/` La historia | Recorrido cinematográfico con música y voz narrada que solo se reproduce si el visitante pulsa «Ver la historia» (la botella → el grabado → Rioja → regreso), con sonido y subtítulos opcionales, seguido de la presentación de la marca |
+| `/vinos/` | Tempranillo y Viura (etiqueta de cada vino) con vista 360° fotográfica preparada para cuando existan las fotos, y ficha de cada vino |
 | `/rioja/` | El grabado de la etiqueta con el lema, la tradición vinícola de Rioja, las uvas de ESTORIA (Tempranillo y Viura) y paisajes de la DOCa |
-| `/mesa/` | Momentos para el vino: compartir, ocasiones especiales, buena comida, pequeños momentos |
-| `/contacto/` | Formulario con consentimiento RGPD |
+| `/mesa/` | Momentos para el vino y dos maridajes: el tinto con un cocido y el blanco con un pescado |
+| `/contacto/` | Correo, teléfonos y formulario con consentimiento RGPD |
 | `/aviso-legal/` · `/privacidad/` · `/cookies/` · `/creditos/` | Textos legales y créditos fotográficos |
 
 Además: verificación de mayoría de edad, aviso y configuración de cookies (criterios de la AEPD) y página 404.
@@ -70,17 +70,20 @@ src/
 scripts/prepare_assets.py   genera public/media desde source-assets/ (sin retocar píxeles)
 scripts/prepare_photos.py   descarga y optimiza las fotos con licencia libre
 scripts/prepare_turntable.py convierte las fotos de la base giratoria en la vista 360° (npm run turntable -- <vino>)
+scripts/prepare_viura_label.py etiqueta del Viura a partir de la del Tempranillo (npm run viura-label)
+scripts/prepare_narration.py  voz sintética + música del recorrido (npm run narration)
 tests/            cámara y continuidad, contenido, licencias de fotos, páginas, formularios
 docs/             dirección creativa, storyboard y guía de contenido
 ```
 
-## Fotografías de terceros
+## Fotografías, música y voz de terceros
 
-Todas proceden de Wikimedia Commons, con la licencia libre verificada archivo a archivo:
+Fotos, música (Satie, Gymnopédie n.º 1, CC0) y voz (Piper, modelo «sharvard», CC BY 3.0) se acreditan en `/creditos/`.
+Las fotos proceden de Wikimedia Commons, con la licencia libre verificada archivo a archivo:
 
 - licencia declarada;
 - autor;
-- obra propia o revisión de licencia superada;
+- obra propia, revisión de licencia superada o (fotos de Unsplash anteriores a junio de 2017) copia archivada de su publicación con CC0;
 - sin plantillas de derechos de imagen ni de marca;
 - sin personas identificables ni marcas de vino de terceros.
 

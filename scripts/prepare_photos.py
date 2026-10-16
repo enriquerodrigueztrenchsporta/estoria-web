@@ -24,9 +24,11 @@ PHOTOS = {
     "elvillar-hileras": ("https://upload.wikimedia.org/wikipedia/commons/0/0c/Vi%C3%B1edos_en_oto%C3%B1o%2C_Elvillar_6.jpg", None),
     "elvillar-sierra": ("https://upload.wikimedia.org/wikipedia/commons/c/cf/Vi%C3%B1edos_en_oto%C3%B1o%2C_Elvillar_4.jpg", None),
     "san-vicente": ("https://upload.wikimedia.org/wikipedia/commons/2/20/San_Vicente_de_la_Sonsierra_%282020%29_3.jpg", None),
-    # Recorte superior para excluir a una persona que aparece al fondo
-    "mesa-flores": ("https://upload.wikimedia.org/wikipedia/commons/d/d1/Legant_table_setting_with_white_floral_centerpiece.jpg", (0, 0.3, 1, 1)),
-    "mesa-velas": ("https://upload.wikimedia.org/wikipedia/commons/2/28/Pixella15317_%2824030634680%29.jpg", None),
+    "cocido": ("https://upload.wikimedia.org/wikipedia/commons/b/b4/Cocido.jpg", None),
+    # Recorte lateral para excluir un objeto (teléfono) en la esquina inferior derecha
+    "mesa-tinto": ("https://upload.wikimedia.org/wikipedia/commons/8/87/Outdoor_wine_dinner_%28Unsplash%29.jpg", (0, 0, 0.88, 1)),
+    "mesa-blanco-pescado": ("https://upload.wikimedia.org/wikipedia/commons/b/bb/Gourmet_meal_and_white_wine_%28Unsplash%29.jpg", None),
+    "mesa-dos": ("https://upload.wikimedia.org/wikipedia/commons/4/48/Vintage_wine_dinner_for_two_%28Unsplash%29.jpg", None),
     "pinchos-laguardia": ("https://upload.wikimedia.org/wikipedia/commons/6/6e/Pinchos_laguardia.jpg", None),
 }
 

@@ -1,9 +1,8 @@
 import { story } from "@/content/copy";
-import { owner, stockists } from "@/content/site";
+import { contact, stockists } from "@/content/site";
 import { InquiryForm } from "./InquiryForm";
 
 export function ContactSection() {
-  const email = owner.email.status === "confirmed" ? owner.email.value : null;
   return (
     <section aria-labelledby="contacto-title" data-tone="light" className="bg-marfil pb-28 pt-[calc(var(--header-h)+4rem)] md:pb-40">
       <div className="container-editorial grid gap-16 md:grid-cols-12">
@@ -13,11 +12,26 @@ export function ContactSection() {
             {story.contact.title}
           </h1>
           <p className="mt-6 max-w-[36ch] text-lg leading-relaxed text-sepia-oscuro">{story.contact.body}</p>
-          {email && (
-            <a href={`mailto:${email}`} className="link-underline display mt-8 inline-block text-2xl">
-              {email}
-            </a>
-          )}
+          <dl className="mt-10 space-y-6">
+            <div>
+              <dt className="eyebrow text-sepia-oscuro">Correo electrónico</dt>
+              <dd className="mt-2">
+                <a href={`mailto:${contact.email}`} className="link-underline display text-2xl">
+                  {contact.email}
+                </a>
+              </dd>
+            </div>
+            <div>
+              <dt className="eyebrow text-sepia-oscuro">Teléfono</dt>
+              <dd className="mt-2 flex flex-wrap gap-x-8 gap-y-2">
+                {contact.phones.map((p) => (
+                  <a key={p.tel} href={`tel:${p.tel}`} className="link-underline display text-2xl">
+                    {p.label}
+                  </a>
+                ))}
+              </dd>
+            </div>
+          </dl>
 
           <div className="mt-16 border-t border-tinta/15 pt-8">
             <h2 className="eyebrow text-sepia-oscuro">Dónde encontrar ESTORIA</h2>

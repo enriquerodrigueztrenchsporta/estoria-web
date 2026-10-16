@@ -4,10 +4,19 @@
  * Un único eje de tiempo para todas las capas: avanzar y retroceder es siempre continuo.
  * La cámara va de la botella directamente al grabado (sin recorrer los textos de la etiqueta).
  */
+import narrationData from "@/content/narration.generated.json";
 import { frame, mixShots, type Framing, type Shot, type Size } from "./camera";
 
-/** Duración total del recorrido, en segundos. */
-export const JOURNEY_SECONDS = 20;
+/** Voz y música del recorrido (generadas con `npm run narration`). */
+export const narration: { duration: number; audio: string; cues: { start: number; end: number; text: string }[] } = narrationData;
+
+/** Duración total del recorrido, en segundos: la del audio narrado. */
+export const JOURNEY_SECONDS = narration.duration;
+
+/** Frase de la voz que suena en el segundo `t`, o `null` entre frases. */
+export function cueAt(t: number): string | null {
+  return narration.cues.find((c) => t >= c.start && t <= c.end + 0.4)?.text ?? null;
+}
 
 export const SCENES = [
   { id: "revelacion", numeral: "I", title: "La revelación", start: 0 },

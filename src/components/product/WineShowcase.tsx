@@ -128,7 +128,7 @@ export function WineShowcase() {
                 <p className="wordmark text-sm tracking-[0.42em]" style={{ color: t.accent }}>
                   {wine.name}
                 </p>
-                <h2 className="display mt-3 text-[clamp(3rem,7vw,6.5rem)] uppercase tracking-[0.04em]">{wine.variety}</h2>
+                <h2 className="display mt-3 text-[clamp(2.25rem,9.5vw,6.5rem)] uppercase tracking-[0.04em] md:text-[clamp(3rem,7vw,6.5rem)]">{wine.variety}</h2>
                 <p className="eyebrow mt-3" style={{ color: t.muted }}>
                   {wine.appellation}
                 </p>
@@ -172,7 +172,7 @@ export function WineShowcase() {
 
 /**
  * Escenario de la botella. Solo fotografía real: la vista 360° si ya existen las fotos de la botella
- * sobre base giratoria; si no, la foto disponible; y, sin foto, la etiqueta provisional rotulada.
+ * sobre base giratoria; si no, la foto disponible; sin foto, la etiqueta; y sin etiqueta, la provisional rotulada.
  */
 function BottleStage({ wine }: { wine: Wine }) {
   const alt = `Botella de ${wine.name} ${wine.variety}`;
@@ -186,6 +186,19 @@ function BottleStage({ wine }: { wine: Wine }) {
         width={wine.bottle.width}
         height={wine.bottle.height}
         className="absolute inset-0 m-auto h-full max-h-[86%] w-auto object-contain [mask-image:radial-gradient(ellipse_58%_56%_at_48.5%_48%,#000_62%,transparent_100%)]"
+        draggable={false}
+      />
+    );
+  }
+  if (wine.label) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={asset(wine.label.src)}
+        alt={wine.label.alt}
+        width={wine.label.width}
+        height={wine.label.height}
+        className="absolute inset-0 m-auto h-auto max-h-[80%] w-auto max-w-[88%] object-contain drop-shadow-[0_40px_50px_rgba(36,32,29,0.28)]"
         draggable={false}
       />
     );
