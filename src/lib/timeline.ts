@@ -32,13 +32,13 @@ type Window = [number, number];
 /** Ventanas de tiempo de cada capa. */
 export const T = {
   heroText: [0.03, 0.08] as Window,
-  bottleOut: [0.19, 0.25] as Window,
-  labelIn: [0.18, 0.24] as Window,
+  bottleOut: [0.19, 0.27] as Window,
+  labelIn: [0.18, 0.25] as Window,
   paperOut: [0.25, 0.32] as Window,
   nearOut: [0.42, 0.5] as Window,
-  photosIn: [0.47, 0.56] as Window,
-  engravingOut: [0.84, 0.89] as Window,
-  returnIn: [0.86, 0.93] as Window,
+  photosIn: [0.46, 0.56] as Window,
+  engravingOut: [0.83, 0.9] as Window,
+  returnIn: [0.85, 0.94] as Window,
   originCaptions: [
     [0.31, 0.405],
     [0.405, 0.5],

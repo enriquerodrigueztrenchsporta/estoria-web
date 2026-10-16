@@ -4,7 +4,7 @@ Universo digital de **ESTORIA**, vino de la Denominación de Origen Calificada R
 
 | Página | Contenido |
 |---|---|
-| `/` La historia | Recorrido cinematográfico de 20 s con música que solo se reproduce si el visitante pulsa «Ver la historia» (la botella → el grabado → Rioja → regreso), con el sonido opcional, seguido de la presentación de la marca |
+| `/` La historia | Recorrido cinematográfico de 30 s con música que solo se reproduce si el visitante pulsa «Ver la historia» (la botella → el grabado → Rioja → regreso), con el sonido opcional, seguido de la presentación de la marca |
 | `/vinos/` | Tempranillo y Viura (etiqueta de cada vino) con vista 360° fotográfica preparada para cuando existan las fotos, y ficha de cada vino |
 | `/rioja/` | El grabado de la etiqueta con el lema, la tradición vinícola de Rioja, las uvas de ESTORIA (Tempranillo y Viura) y paisajes de la DOCa |
 | `/mesa/` | Momentos para el vino y dos maridajes: el tinto con un cocido y el blanco con un pescado |

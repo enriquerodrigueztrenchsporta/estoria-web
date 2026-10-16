@@ -539,8 +539,9 @@ function Journey() {
 function RiojaPhoto({ photo, p, index }: { photo: Photo; p: MotionValue<number>; index: number }) {
   const [start, end] = T.riojaCaptions[Math.min(index, T.riojaCaptions.length - 1)]!;
   // La primera foto ya está presente cuando el grabado se funde; las siguientes entran en su ventana
-  const opacity = useTransform(p, index === 0 ? [0, 1] : [start - 0.01, start + 0.012], index === 0 ? [1, 1] : [0, 1]);
-  const scale = useTransform(p, [index === 0 ? T.photosIn[0] : start - 0.01, end + 0.02], [1.1, 1]);
+  // Fundido largo entre fotos (≈ 6 % del recorrido) para que el paso de una a otra sea pausado
+  const opacity = useTransform(p, index === 0 ? [0, 1] : [start - 0.035, start + 0.025], index === 0 ? [1, 1] : [0, 1]);
+  const scale = useTransform(p, [index === 0 ? T.photosIn[0] : start - 0.035, end + 0.03], [1.1, 1]);
   return (
     <motion.div aria-hidden className="absolute inset-0 overflow-hidden" style={{ opacity }}>
       {/* eslint-disable-next-line @next/next/no-img-element */}

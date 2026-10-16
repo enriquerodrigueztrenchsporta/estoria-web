@@ -87,7 +87,7 @@ Requisitos de cada foto:
 
 ## 7. Música del recorrido
 
-- Generar: `npm run music -- --musica <Gymnopedie_No._1..ogg> [--segundos 20]` (requiere `pip install imageio-ffmpeg`).
+- Generar: `npm run music -- --musica <Gymnopedie_No._1..ogg> [--segundos 30]` (requiere `pip install imageio-ffmpeg`).
   Escribe `public/media/audio/historia.mp3` y `src/content/soundtrack.json`; la duración del recorrido es la de la música.
 - La voz narrada se retiró a petición de la marca (la voz sintética no sonaba natural). Si en el futuro se graba una
   locución profesional, puede mezclarse en la misma pista.

@@ -47,7 +47,7 @@ Decisiones técnicas:
 
 ## Cambios v4 (16/10/2026)
 
-- El recorrido lleva música (Satie, Gymnopédie n.º 1, 20 s). La imagen tiene su propio reloj y llega siempre al final; la
+- El recorrido lleva música (Satie, Gymnopédie n.º 1, 30 s). La imagen tiene su propio reloj y llega siempre al final; la
   música la acompaña y se resincroniza si se desvía, de modo que un corte del audio nunca detiene la imagen. Al empezar, la
   página se coloca para que el escenario ocupe la pantalla; solo se pausa al salir claramente de él (menos del 20 % visible)
   o al cambiar de pestaña / bloquear el móvil. Botones de pausa, saltar y sonido.

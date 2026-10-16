@@ -180,6 +180,6 @@ export const audioCredits = [
     licenseUrl: CC0,
     sourceUrl: commons("Gymnopedie No. 1..ogg"),
     sourceLabel: "Original en Wikimedia Commons",
-    changes: "Fragmento de los primeros 20 segundos, con fundidos, volumen normalizado y conversión a MP3.",
+    changes: "Fragmento de los primeros 30 segundos, con fundidos, volumen normalizado y conversión a MP3.",
   },
 ] as const;
